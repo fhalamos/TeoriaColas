@@ -1,0 +1,2 @@
+-El archivo excel debe estar en formato .xls, se debe llamar Input, y debe estar en la misma carpeta donde se corre la aplicacion.
+-Las filas del excel deben estar ordenadas segun FechaAutorizacion
