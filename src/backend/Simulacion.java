@@ -181,6 +181,22 @@ public class Simulacion {
 		
 		
 	}
+	
+	private List<Auto> getColaTotalDesabolladura(){
+	
+		List<Auto> trabajosActuales= new ArrayList<Auto>();
+		for(int i=0; i<desabolladores.size(); i++)
+		{
+			for(int j=0; j<desabolladores.get(i).trabajoActual.size(); j++)
+			{
+				trabajosActuales.add(desabolladores.get(i).trabajoActual.get(j));
+			}
+		}
+		
+	
+	}
+	
+	
 
 	private void reordenarColaDesabolladura(List<Auto> colaDesabolladura) {
 
