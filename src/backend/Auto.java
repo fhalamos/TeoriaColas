@@ -1,11 +1,16 @@
 package backend;
 
+enum etapa{desabolladura, pintura, armado, pulido};
+
 public class Auto {
 
+	
 	String OT;
 	int fechaAutorizacion;
 	String requiereMecanico;
 	String tipoSiniestro;
+	
+	etapa etapa;
 	
 	int tiempoDesabolladura;
 	

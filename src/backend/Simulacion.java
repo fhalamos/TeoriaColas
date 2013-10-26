@@ -36,6 +36,7 @@ public class Simulacion {
 	List<Auto> colaPintura;
 	List<Auto> colaArmado;
 	List<Auto> colaPulido;
+	List<Auto> colaAutosListos;
 	
 	
 	public Simulacion(int cP, int cD, int cM)
@@ -54,6 +55,8 @@ public class Simulacion {
 		colaPintura= new ArrayList<Auto>();
 		colaArmado= new ArrayList<Auto>();
 		colaPulido= new ArrayList<Auto>();
+		
+		colaAutosListos= new ArrayList<Auto>();
 		
 		
 	}
@@ -82,7 +85,13 @@ public class Simulacion {
 				fechaLlegada=autosPendientes.get(0).getFechaAutorizacion();
 			}
 			
-			//revisamos la situacion de cada trabajador, empezando por la ultima etapa
+			
+			
+			
+			
+			//revisamos la situacion de cada trabajador
+			
+			//desabolladores...
 			for(Trabajador t : desabolladores)
 			{
 				//si esta desocupado, le tratamos de asignar trabajo
@@ -100,6 +109,65 @@ public class Simulacion {
 				{
 					//agregamos el trabajo a la siguiente cola del proceso
 					colaPintura.add(t.getTrabajoActual());
+					
+					//le quitamos al trabajador ese trabajo
+					t.setTrabajoActual(null);
+				}
+
+			}
+			
+			
+			//pintores...
+			for(Trabajador t : pintores)
+			{
+				//si esta desocupado, le tratamos de asignar trabajo
+				if (t.ocupado(i)==false)
+				{
+					if(colaPintura.size()!=0)
+					{
+						t.asignarTrabajo(colaPintura.get(0), i);
+						colaPintura.remove(0);
+					}
+				}
+				
+				//si esta ocupado, pero es su ultimo dia de trabajo, tiene que mover su trabajo a la siguiente cola del proceso
+				if(t.ocupado(i)==true && t.ocupado(i+1)==false)
+				{
+					//agregamos el trabajo a la siguiente cola del proceso
+					colaArmado.add(t.getTrabajoActual());
+					
+					//le quitamos al trabajador ese trabajo
+					t.setTrabajoActual(null);
+				}
+
+			}
+			
+			//mecanicos...
+			for(Trabajador t : mecanicos)
+			{
+				//si esta desocupado, le tratamos de asignar trabajo
+				if (t.ocupado(i)==false)
+				{
+					if(colaArmado.size()!=0)
+					{
+						t.asignarTrabajo(colaArmado.get(0), i);
+						colaArmado.remove(0);
+					}
+					
+					else if(colaPulido.size()!=0)
+					{
+						t.asignarTrabajo(colaPulido.get(0), i);
+						colaPulido.remove(0);
+					}
+				}
+				
+				//si esta ocupado, pero es su ultimo dia de trabajo, tiene que mover su trabajo a la siguiente cola del proceso
+				if(t.ocupado(i)==true && t.ocupado(i+1)==false)
+				{
+					//agregamos el trabajo a la siguiente cola del proceso
+					//if(t.getTrabajoActual().)
+					
+					colaAutosListos.add(t.getTrabajoActual());
 					
 					//le quitamos al trabajador ese trabajo
 					t.setTrabajoActual(null);
