@@ -11,7 +11,7 @@ public class Auto {
 	String requiereMecanico;
 	String tipoSiniestro;
 	
-	etapa etapa;
+	etapa etapa_;
 	
 	int tiempoDesabolladura;
 	int tiempoPintura;
@@ -94,7 +94,7 @@ public class Auto {
 	
 	public etapa getEtapa()
 	{
-		return etapa;
+		return etapa_;
 	}
 	
 	public String getOT()
@@ -105,18 +105,21 @@ public class Auto {
 	public void fijarTiemposTrabajo(etapa e, int i) {
 		if(e==etapa.desabolladura)
 		{
+			etapa_=e;
 			llegadaDesabolladura=i;
 			salidaDesabolladura=i+tiempoDesabolladura;
 		}
 		
 		if(e==etapa.pintura)
 		{
+			etapa_=e;
 			llegadaPintura=i;
 			salidaPintura=i+tiempoPintura;
 		}
 		
 		if(e==etapa.armado)
 		{
+			etapa_=e;
 			llegadaArmado=i;
 			salidaArmado=i+tiempoArmado;
 		}
