@@ -31,6 +31,8 @@ public class Trabajador {
 		
 	}
 	
+
+	
 	//retorna true si el trabajador esta desocupado el dia i
 	public boolean ocupado (int i)
 	{
