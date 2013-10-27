@@ -74,6 +74,8 @@ public class Auto {
 		 llegadaPulido=0;
 	}
 	
+	
+	
 	public String imprimir()
 	{
 		return "Auto "+OT+": Fecha autorizacion: "+tiempoAutorizacion+" Requiere Mecanico: "+requiereMecanico+" Tipo Siniestro: "+tipoSiniestro;
