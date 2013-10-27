@@ -145,7 +145,12 @@ public class Auto {
 			salidaArmado=i+tiempoArmado;
 		}
 		
-		
+		if(e==etapa.pulido)
+		{
+			etapa_=e;
+			llegadaPulido=i;
+			salidaPulido=i+tiempoPulido;
+		}
 		
 		
 	}

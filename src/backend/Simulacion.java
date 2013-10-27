@@ -84,17 +84,17 @@ public class Simulacion {
 			
 			
 			
-			// vemos todos los autos que llegan el dia i llego un auto nuevo
+			// vemos todos los autos que llegan el dia i al taller
 			if (autosPendientes.size() != 0) {
 				int llegada = autosPendientes.get(0).getTiempoAutorizacion();
 				while (i == llegada) {
-					reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
-					asignarAcola(autosPendientes.get(0));
-					//colaDesabolladura.add(autosPendientes.get(0));
 					
-					lineas.add("Llego el auto "
-							+ autosPendientes.get(0).getOT() + " en t= " + i
-							+ " al taller.");
+					colaDesabolladura.add(autosPendientes.get(0));
+					//reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
+					//asignarAcola(autosPendientes.get(0));
+					
+					lineas.add("Llego el auto " + autosPendientes.get(0).getOT() + " en t= " + i+ " al taller.");
+					
 					//int tiempoDesabolladoListoAproximado = proximoTrabajadorLibre(
 					//		tipoTrabajador.desabollador, i)
 					//		+ autosPendientes.get(0).tiempoDesabolladura;
@@ -111,15 +111,13 @@ public class Simulacion {
 					// System.out.print("Estara listo el "+tiempoMecanicoListoAproximado+" (en horas)");
 					// System.out.println();
 
-					lineas.add("Ingresamos a cola desabolladura a "
-							+ autosPendientes.get(0).getOT() + " en t= " + i);
+					lineas.add("Ingresamos a cola desabolladura a " + autosPendientes.get(0).getOT() + " en t= " + i);
 					//System.out.println();
 
 					//reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
 					autosPendientes.remove(0);
 					if (autosPendientes.size() != 0)
-						llegada = autosPendientes.get(0)
-								.getTiempoAutorizacion();
+						llegada = autosPendientes.get(0).getTiempoAutorizacion();
 					else
 						break;
 				}
@@ -133,15 +131,10 @@ public class Simulacion {
 				if (t.ocupado(i) == false) {
 					if (colaDesabolladura.size() != 0) {
 
-						colaDesabolladura.get(0).fijarTiemposTrabajo(
-								etapa.desabolladura, i);
+						colaDesabolladura.get(0).fijarTiemposTrabajo(etapa.desabolladura, i);
 						t.asignarTrabajo(colaDesabolladura.get(0), i, etapa.desabolladura);
-						lineas.add("Le asignamos el auto "
-								+ colaDesabolladura.get(0).getOT()
-								+ " al desabollador " + t.id + " en t= " + i);
-						System.out.print("Le asignamos el auto "
-								+ colaDesabolladura.get(0).getOT()
-								+ " al desabollador " + t.id + " en t= " + i);
+						lineas.add("Le asignamos el auto " + colaDesabolladura.get(0).getOT() + " al desabollador " + t.id + " en t= " + i);
+						System.out.print("Le asignamos el auto " + colaDesabolladura.get(0).getOT() + " al desabollador " + t.id + " en t= " + i);
 						System.out.println();
 						colaDesabolladura.remove(0);
 					}
@@ -165,8 +158,7 @@ public class Simulacion {
 				// si esta desocupado, le tratamos de asignar trabajo
 				if (t.ocupado(i) == false) {
 					if (colaPintura.size() != 0) {
-						colaPintura.get(0)
-								.fijarTiemposTrabajo(etapa.pintura, i);
+						colaPintura.get(0).fijarTiemposTrabajo(etapa.pintura, i);
 						t.asignarTrabajo(colaPintura.get(0), i, etapa.pintura);
 						System.out.print("Le asignamos el auto "
 								+ colaPintura.get(0).getOT() + " al pintor "
@@ -232,6 +224,7 @@ public class Simulacion {
 					// agregamos el trabajo a la siguiente cola del proceso
 					// si era la etapa armado
 					if (t.getTrabajoActual().getEtapa() == etapa.armado) {
+						
 						colaPulido.add(t.getTrabajoActual());
 						//reordenarColaPulido();
 					}
@@ -247,9 +240,26 @@ public class Simulacion {
 			}
 
 		}
+		calcularDemorasTotales();
 		imprimirRegistro();
 
 	}
+	
+	
+	private void calcularDemorasTotales() {
+		
+		int sumaDemoras=0;
+		for(int i=0; i<colaAutosListos.size(); i++)
+		{
+			sumaDemoras+=colaAutosListos.get(i).salidaPulido-colaAutosListos.get(i).getTiempoAutorizacion();
+		}
+		
+		int demoraPromedio = sumaDemoras/colaAutosListos.size();
+		System.out.print("----");
+		System.out.print(demoraPromedio);
+		
+	}
+
 	//posicion empieza de 0
 	
 	
@@ -531,7 +541,7 @@ public class Simulacion {
 	}
 
 	//metodo recursivo para variar las posiciones en cola y calcular demoras
-	private void reordenarColaDesabolladura( Auto aIngresar, int posicion,int hora) {
+	private void reordenarColaDesabolladura(Auto aIngresar, int posicion,int hora) {
 
 		if( posicion==colaDesabolladura.size()+1)
 			return;
