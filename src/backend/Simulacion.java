@@ -95,6 +95,7 @@ public class Simulacion {
 				}
 			}
 			
+			
 
 			//revisamos la situacion de cada trabajador
 			
@@ -116,6 +117,7 @@ public class Simulacion {
 				{
 					//agregamos el trabajo a la siguiente cola del proceso
 					colaPintura.add(t.getTrabajoActual());
+					reordenarColaPintura();
 					
 					//le quitamos al trabajador ese trabajo
 					t.setTrabajoActual(null);
@@ -142,6 +144,7 @@ public class Simulacion {
 				{
 					//agregamos el trabajo a la siguiente cola del proceso
 					colaArmado.add(t.getTrabajoActual());
+					reordenarColaArmado();
 					
 					//le quitamos al trabajador ese trabajo
 					t.setTrabajoActual(null);
@@ -172,13 +175,17 @@ public class Simulacion {
 				if(t.ocupado(i)==true && t.ocupado(i+1)==false)
 				{
 					//agregamos el trabajo a la siguiente cola del proceso
+					//si era la etapa armado
+					if(t.getTrabajoActual().getEtapa()==etapa.armado)
+						colaPulido.add(t.getTrabajoActual());
+						reordenarColaPulido();
+					
+					
 					//si era la etapa final...
 					if(t.getTrabajoActual().getEtapa()==etapa.pulido)
 						colaAutosListos.add(t.getTrabajoActual());
 					
-					//si era la etapa armado
-					if(t.getTrabajoActual().getEtapa()==etapa.armado)
-						colaPulido.add(t.getTrabajoActual());
+					
 					          
 					//le quitamos al trabajador ese trabajo
 					t.setTrabajoActual(null);
@@ -193,6 +200,21 @@ public class Simulacion {
 		
 	}
 	
+	private void reordenarColaPulido() {
+		// PENDIENTE
+		
+	}
+
+	private void reordenarColaArmado() {
+		// PENDIENTE
+		
+	}
+
+	private void reordenarColaPintura() {
+		// PENDIENTE
+		
+	}
+
 	private List<Auto> getColaTotalDesabolladura(){
 	
 		List<Auto> trabajosActuales= new ArrayList<Auto>();
