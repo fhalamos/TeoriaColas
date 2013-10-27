@@ -5,7 +5,7 @@ enum tipoTrabajador {pintor, desabollador, mecanico};
 
 public class Trabajador {
 	
-	int id;
+	String id;
 	boolean [] calendario;
 	tipoTrabajador tipo;
 	public Auto trabajoActual;
@@ -14,7 +14,7 @@ public class Trabajador {
 	
 	
 	
-	public Trabajador (int id, char tipo)
+	public Trabajador (String id, char tipo)
 	{
 		this.id = id;
 		
@@ -44,7 +44,7 @@ public class Trabajador {
 		//le llenamos el horario al trabajador
 		trabajoActual=auto;
 		
-		for(int i = hora; i < hora+auto.getTiempoDesabolladura(); i++)
+		for(int i = hora; i < hora+auto.getTiempoDesabolladura() && hora+auto.getTiempoDesabolladura() < 365*2*8; i++)
 		{
 			calendario[i]=true;
 		}
@@ -59,6 +59,16 @@ public class Trabajador {
 	public void setTrabajoActual(Auto auto)
 	{
 		trabajoActual=auto;
+	}
+
+	public int proximoTiempoLibreDesde(int i) {
+		// TODO Auto-generated method stub
+		for(; i<365*2*8; i++)
+		{
+			if(calendario[i]==false)
+				return i;
+		}
+		return Integer.MAX_VALUE;
 	}
 	
 	

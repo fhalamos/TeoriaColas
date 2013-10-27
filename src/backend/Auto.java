@@ -14,6 +14,12 @@ public class Auto {
 	etapa etapa;
 	
 	int tiempoDesabolladura;
+	int tiempoPintura;
+	int tiempoArmado;
+	int tiempoPulido;
+	
+	
+	
 	int llegadaDesabolladura;
 	int llegadaPintura;
 	int llegadaArmado;
@@ -30,13 +36,32 @@ public class Auto {
 		this.requiereMecanico=requiereMecanico;
 		this.tipoSiniestro=tipoSiniestro;
 		
-		//asignarTiempoDesabolladura, segun promedio del excel
+		//asignarTiempos de trabajo, segun promedio del excel
 		if(tipoSiniestro.equals("G"))
+		{
 			tiempoDesabolladura=7*8;
-		if(tipoSiniestro.equals("G"))
+			tiempoPintura=6*8; //volver a fijar
+			tiempoArmado=6*8; //volver a fijar
+			tiempoPulido=6*8; //volver a fijar
+		}
+		if(tipoSiniestro.equals("M"))
+		{	
 			tiempoDesabolladura=3*8;
-		if(tipoSiniestro.equals("G"))
+			tiempoPintura=6*8; //volver a fijar
+			tiempoArmado=6*8; //volver a fijar
+			tiempoPulido=6*8; //volver a fijar
+		}
+		
+		if(tipoSiniestro.equals("L"))
+		{
 			tiempoDesabolladura=2*8;
+			tiempoPintura=6*8; //volver a fijar
+			tiempoArmado=6*8; //volver a fijar
+			tiempoPulido=6*8; //volver a fijar
+		}
+		
+		
+		
 		
 		 
 		 llegadaDesabolladura=0;
@@ -68,6 +93,35 @@ public class Auto {
 	public etapa getEtapa()
 	{
 		return etapa;
+	}
+	
+	public String getOT()
+	{
+		return OT;
+	}
+
+	public void fijarTiemposTrabajo(etapa e, int i) {
+		if(e==etapa.desabolladura)
+		{
+			llegadaDesabolladura=i;
+			salidaDesabolladura=i+tiempoDesabolladura;
+		}
+		
+		if(e==etapa.pintura)
+		{
+			llegadaPintura=i;
+			salidaPintura=i+tiempoPintura;
+		}
+		
+		if(e==etapa.armado)
+		{
+			llegadaArmado=i;
+			salidaArmado=i+tiempoArmado;
+		}
+		
+		
+		
+		
 	}
 
 }
