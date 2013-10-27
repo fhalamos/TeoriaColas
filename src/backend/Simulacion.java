@@ -22,6 +22,7 @@ public class Simulacion {
 	int cantidadPintores;
 	int cantidadDesabolladores;
 	int cantidadMecanicos;
+	int iteracion;
 	List demoras;
 
 	List<Trabajador> pintores;
@@ -62,6 +63,7 @@ public class Simulacion {
 		colaPulido = new ArrayList<Auto>();
 
 		colaAutosListos = new ArrayList<Auto>();
+		iteracion=0;
 		
 		instanciarPersonal();
 		cargarAutosDeExcel();
@@ -83,7 +85,9 @@ public class Simulacion {
 			if (autosPendientes.size() != 0) {
 				int llegada = autosPendientes.get(0).getTiempoAutorizacion();
 				while (i == llegada) {
-					colaDesabolladura.add(autosPendientes.get(0));
+					reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
+					asignarAcola(autosPendientes.get(0));
+					//colaDesabolladura.add(autosPendientes.get(0));
 					
 					System.out.print("Llego el auto "
 							+ autosPendientes.get(0).getOT() + " en t= " + i
@@ -284,6 +288,7 @@ public class Simulacion {
 
 	}
 	
+	//poner en determinada posicion un veh
 	private void ordenarCola(List<Auto> cola, int posicion, Auto aOrdenar)
 	{
 		List<Auto> nuevo= new ArrayList<Auto>();
@@ -301,7 +306,7 @@ public class Simulacion {
 		
 	}
 	
-
+// calculo a traves de simulacion de los tiempos de salida 
 	private void calcularDemoras(int hora, List<Auto> copiaColaDesabolladura, List<Auto>copiaColaPintura,
 			List<Auto> copiaColaArmado, List<Auto> copiaColaPulido) {
 
@@ -411,8 +416,7 @@ public class Simulacion {
 					// si era la etapa final...
 					if (t.getTrabajoActual().getEtapa() == etapa.pulido) {
 						t.getTrabajoActual().salidaPulido = hora;
-						demoras.add(t.getTrabajoActual().salidaPulido);
-						
+						demoras.set(iteracion, (int)demoras.get(iteracion)+t.getTrabajoActual().salidaPulido);						
 					}
 
 					// le quitamos al trabajador ese trabajo
@@ -477,6 +481,7 @@ public class Simulacion {
 		}
 	}
 
+	//metodo recursivo para variar las posiciones en cola y calcular demoras
 	private void reordenarColaDesabolladura( Auto aIngresar, int posicion,int hora) {
 
 		if( posicion==colaDesabolladura.size()+1)
@@ -510,13 +515,31 @@ public class Simulacion {
 		ordenarCola(copiaColaDesabolladura, posicion, a);
 		
 		calcularDemoras(hora, copiaColaDesabolladura, copiaColaPintura, copiaColaArmado, copiaColaPulido);
-		
+		iteracion++;
 		reordenarColaDesabolladura(aIngresar,  posicion++,hora); 
 
 		
 		}
 	
-	 
+	//asignar a la cola una vez sabida la posicion a tomar, ver mas CRITERIOS de aceptacion
+	private void asignarAcola(Auto a)
+	{
+	  int comparar= (int)demoras.get(0);
+	  int pos=0;
+	  for(int i=1; i<demoras.size();i++)
+	  {
+		if(comparar> (int) demoras.get(i))
+		{
+			pos=i;
+			comparar=(int)demoras.get(i);
+		}
+			
+						
+	  }
+	  
+	  ordenarCola(colaDesabolladura, pos, a);
+	}
+	
 	
 	
 		
