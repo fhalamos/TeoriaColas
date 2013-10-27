@@ -15,6 +15,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class Simulacion {
 
+	List <String> lineas;
+	
 	int cantidadPintores;
 	int cantidadDesabolladores;
 	int cantidadMecanicos;
@@ -25,7 +27,6 @@ public class Simulacion {
 
 	// autos que aun no "han llegado" segun la simulacion
 	List<Auto> autosPendientes;
-
 	List<Auto> colaDesabolladura;
 	List<Auto> colaPintura;
 	List<Auto> colaArmado;
@@ -63,28 +64,35 @@ public class Simulacion {
 
 	public void correr() {
 
-		
-
-		// imprimirAutos();
 
 		// simulamos los 2 años (en horas)
 		for (int i = 0; i < 365 * 2 * 8; i++) {
+			
+			
 			// vemos todos los autos que llegan el dia i llego un auto nuevo
 			if (autosPendientes.size() != 0) {
 				int llegada = autosPendientes.get(0).getTiempoAutorizacion();
+
 				while (i == llegada) {
 					colaDesabolladura.add(autosPendientes.get(0));
 					System.out.print("Llego el auto "
 							+ autosPendientes.get(0).getOT() + " en t= " + i
 							+ " al taller.");
+					
 					int tiempoDesabolladoListoAproximado = proximoTrabajadorLibre(
 							tipoTrabajador.desabollador, i)
 							+ autosPendientes.get(0).tiempoDesabolladura;
-					int tiempoPintadoListoAproximado = proximoTrabajadorLibre(
+					
+					int tiempoPintadoListoAproximado=Integer.MAX_VALUE;
+					if(tiempoDesabolladoListoAproximado<365*8*2)
+						tiempoPintadoListoAproximado= proximoTrabajadorLibre(
 							tipoTrabajador.pintor,
 							tiempoDesabolladoListoAproximado)
 							+ autosPendientes.get(0).tiempoPintura;
-					int tiempoMecanicoListoAproximado = proximoTrabajadorLibre(
+					
+					int tiempoMecanicoListoAproximado=Integer.MAX_VALUE;
+					if(tiempoPintadoListoAproximado<365*2*8)
+						tiempoMecanicoListoAproximado= proximoTrabajadorLibre(
 							tipoTrabajador.mecanico,
 							tiempoPintadoListoAproximado)
 							+ autosPendientes.get(0).tiempoArmado
@@ -93,8 +101,7 @@ public class Simulacion {
 					// System.out.print("Estara listo el "+tiempoMecanicoListoAproximado+" (en horas)");
 					// System.out.println();
 
-					System.out.print("Ingresamos a cola desabolladura a "
-							+ autosPendientes.get(0).getOT() + " en t= " + i);
+					System.out.print("Ingresamos a cola desabolladura.");
 					System.out.println();
 
 					reordenarColaDesabolladura(colaDesabolladura);
@@ -123,6 +130,7 @@ public class Simulacion {
 								+ " al desabollador " + t.id + " en t= " + i);
 						System.out.println();
 						colaDesabolladura.remove(0);
+						
 					}
 				}
 

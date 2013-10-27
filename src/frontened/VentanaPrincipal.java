@@ -2,6 +2,7 @@ package frontened;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Window;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -14,11 +15,15 @@ import javax.swing.JMenu;
 
 import backend.ExcelSheetReader;
 import backend.Simulacion;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import java.awt.TextField;
 
 public class VentanaPrincipal extends JFrame {
 
 	static Simulacion simulacion;
-	private JPanel contentPane;
 
 	/**
 	 * 
@@ -36,8 +41,7 @@ public class VentanaPrincipal extends JFrame {
 					VentanaPrincipal frame = new VentanaPrincipal();
 					frame.setVisible(true);
 					
-					simulacion = new Simulacion(1,1,1);
-					simulacion.correr();
+					
 					
 					
 					
@@ -57,7 +61,7 @@ public class VentanaPrincipal extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(VentanaPrincipal.class.getResource("/frontened/Citroen Logo 3.jpg")));
 		setTitle("Agendador Citroen ");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 290, 63);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -65,18 +69,20 @@ public class VentanaPrincipal extends JFrame {
 		JMenu mnArchivo = new JMenu("Archivo");
 		menuBar.add(mnArchivo);
 		
-		JMenuItem mntmNuevaSimulacin = new JMenuItem("Nueva simulaci\u00F3n");
-		mnArchivo.add(mntmNuevaSimulacin);
-		
 		JMenuItem mntmCargarBd = new JMenuItem("Cargar BD");
+		mntmCargarBd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				simulacion = new Simulacion(5,5,5);
+				simulacion.correr();
+			
+				
+			}
+		});
 		mnArchivo.add(mntmCargarBd);
 		
 		JMenu mnAyuda = new JMenu("Ayuda");
 		menuBar.add(mnAyuda);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
 	}
 
 }
