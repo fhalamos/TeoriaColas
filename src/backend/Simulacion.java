@@ -79,34 +79,37 @@ public class Simulacion {
 
 		// simulamos los 2 años (en horas)
 		for (int i = 0; i < 365 * 2 * 8; i++) {
+			
+			
+			
 			// vemos todos los autos que llegan el dia i llego un auto nuevo
 			if (autosPendientes.size() != 0) {
 				int llegada = autosPendientes.get(0).getTiempoAutorizacion();
 				while (i == llegada) {
 					colaDesabolladura.add(autosPendientes.get(0));
 					
-					System.out.print("Llego el auto "
+					lineas.add("Llego el auto "
 							+ autosPendientes.get(0).getOT() + " en t= " + i
 							+ " al taller.");
-					int tiempoDesabolladoListoAproximado = proximoTrabajadorLibre(
-							tipoTrabajador.desabollador, i)
-							+ autosPendientes.get(0).tiempoDesabolladura;
-					int tiempoPintadoListoAproximado = proximoTrabajadorLibre(
-							tipoTrabajador.pintor,
-							tiempoDesabolladoListoAproximado)
-							+ autosPendientes.get(0).tiempoPintura;
-					int tiempoMecanicoListoAproximado = proximoTrabajadorLibre(
-							tipoTrabajador.mecanico,
-							tiempoPintadoListoAproximado)
-							+ autosPendientes.get(0).tiempoArmado
-							+ autosPendientes.get(0).tiempoPulido;
+					//int tiempoDesabolladoListoAproximado = proximoTrabajadorLibre(
+					//		tipoTrabajador.desabollador, i)
+					//		+ autosPendientes.get(0).tiempoDesabolladura;
+					//int tiempoPintadoListoAproximado = proximoTrabajadorLibre(
+					//		tipoTrabajador.pintor,
+					//		tiempoDesabolladoListoAproximado)
+					//		+ autosPendientes.get(0).tiempoPintura;
+					//int tiempoMecanicoListoAproximado = proximoTrabajadorLibre(
+					//		tipoTrabajador.mecanico,
+					//		tiempoPintadoListoAproximado)
+					//		+ autosPendientes.get(0).tiempoArmado
+					//		+ autosPendientes.get(0).tiempoPulido;
 
 					// System.out.print("Estara listo el "+tiempoMecanicoListoAproximado+" (en horas)");
 					// System.out.println();
 
-					System.out.print("Ingresamos a cola desabolladura a "
+					lineas.add("Ingresamos a cola desabolladura a "
 							+ autosPendientes.get(0).getOT() + " en t= " + i);
-					System.out.println();
+					//System.out.println();
 
 					//reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
 					autosPendientes.remove(0);
@@ -129,6 +132,9 @@ public class Simulacion {
 						colaDesabolladura.get(0).fijarTiemposTrabajo(
 								etapa.desabolladura, i);
 						t.asignarTrabajo(colaDesabolladura.get(0), i);
+						lineas.add("Le asignamos el auto "
+								+ colaDesabolladura.get(0).getOT()
+								+ " al desabollador " + t.id + " en t= " + i);
 						System.out.print("Le asignamos el auto "
 								+ colaDesabolladura.get(0).getOT()
 								+ " al desabollador " + t.id + " en t= " + i);
@@ -161,6 +167,9 @@ public class Simulacion {
 						System.out.print("Le asignamos el auto "
 								+ colaPintura.get(0).getOT() + " al pintor "
 								+ t.id + " en t= " + i);
+						lineas.add("Le asignamos el auto "
+								+ colaPintura.get(0).getOT() + " al pintor "
+								+ t.id + " en t= " + i);
 						System.out.println();
 
 						colaPintura.remove(0);
@@ -190,6 +199,11 @@ public class Simulacion {
 						System.out.print("Le asignamos el auto "
 								+ colaArmado.get(0).getOT() + " al mecanico "
 								+ t.id + " para armado, en t= " + i);
+						lineas.add("Le asignamos el auto "
+								+ colaArmado.get(0).getOT() + " al mecanico "
+								+ t.id + " para armado, en t= " + i);
+						
+						
 						System.out.println();
 						colaArmado.remove(0);
 					}
@@ -201,7 +215,9 @@ public class Simulacion {
 								+ colaPulido.get(0).getOT() + " al mecanico "
 								+ t.id + " para pulido, en t= " + i);
 						System.out.println();
-
+						lineas.add("Le asignamos el auto "
+								+ colaPulido.get(0).getOT() + " al mecanico "
+								+ t.id + " para pulido, en t= " + i);
 						colaPulido.remove(0);
 					}
 				}
@@ -227,6 +243,7 @@ public class Simulacion {
 			}
 
 		}
+		imprimirRegistro();
 
 	}
 	//posicion empieza de 0
@@ -446,7 +463,7 @@ public class Simulacion {
 
 		}
 
-		imprimirRegistro();
+		
 
 	}
 
@@ -457,7 +474,7 @@ public class Simulacion {
 		try {
 			// Crear un objeto File se encarga de crear o abrir acceso a un
 			// archivo que se especifica en su constructor
-			File archivo = new File("output.txt");
+			File archivo = new File("historialSimulacion.txt");
 
 			// Crear objeto FileWriter que sera el que nos ayude a escribir
 			// sobre archivo
@@ -465,7 +482,9 @@ public class Simulacion {
 
 			// Escribimos en el archivo con el metodo write
 			for (int i = 0; i < lineas.size(); i++)
-				escribir.write(lineas.get(i));
+			{
+				escribir.write(lineas.get(i)+"\n");
+			}
 
 			// Cerramos la conexion
 			escribir.close();
@@ -528,6 +547,7 @@ public class Simulacion {
 
 		for (int i = 0; i < autosPendientes.size(); i++) {
 
+			
 			System.out.print(autosPendientes.get(i).imprimir());
 			System.out.println();
 		}

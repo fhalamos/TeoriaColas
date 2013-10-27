@@ -65,10 +65,12 @@ public class Trabajador {
 
 	public int proximoTiempoLibreDesde(int i) {
 		// TODO Auto-generated method stub
-		for(; i<365*2*8; i++)
-		{
+		while(i<365*2*8)
+		{	
 			if(calendario[i]==false)
-				return i;
+					return i;
+			else
+				i++;
 		}
 		return Integer.MAX_VALUE;
 	}
