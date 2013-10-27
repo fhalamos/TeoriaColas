@@ -135,7 +135,7 @@ public class Simulacion {
 
 						colaDesabolladura.get(0).fijarTiemposTrabajo(
 								etapa.desabolladura, i);
-						t.asignarTrabajo(colaDesabolladura.get(0), i);
+						t.asignarTrabajo(colaDesabolladura.get(0), i, etapa.desabolladura);
 						lineas.add("Le asignamos el auto "
 								+ colaDesabolladura.get(0).getOT()
 								+ " al desabollador " + t.id + " en t= " + i);
@@ -167,7 +167,7 @@ public class Simulacion {
 					if (colaPintura.size() != 0) {
 						colaPintura.get(0)
 								.fijarTiemposTrabajo(etapa.pintura, i);
-						t.asignarTrabajo(colaPintura.get(0), i);
+						t.asignarTrabajo(colaPintura.get(0), i, etapa.pintura);
 						System.out.print("Le asignamos el auto "
 								+ colaPintura.get(0).getOT() + " al pintor "
 								+ t.id + " en t= " + i);
@@ -185,7 +185,7 @@ public class Simulacion {
 				if (t.ocupado(i) == true && t.ocupado(i + 1) == false) {
 					// agregamos el trabajo a la siguiente cola del proceso
 					colaArmado.add(t.getTrabajoActual());
-					reordenarColaArmado();
+					//reordenarColaArmado();
 
 					// le quitamos al trabajador ese trabajo
 					t.setTrabajoActual(null);
@@ -199,7 +199,7 @@ public class Simulacion {
 				if (t.ocupado(i) == false) {
 					if (colaArmado.size() != 0) {
 						colaArmado.get(0).fijarTiemposTrabajo(etapa.armado, i);
-						t.asignarTrabajo(colaArmado.get(0), i);
+						t.asignarTrabajo(colaArmado.get(0), i, etapa.armado);
 						System.out.print("Le asignamos el auto "
 								+ colaArmado.get(0).getOT() + " al mecanico "
 								+ t.id + " para armado, en t= " + i);
@@ -214,7 +214,7 @@ public class Simulacion {
 
 					else if (colaPulido.size() != 0) {
 						colaPulido.get(0).fijarTiemposTrabajo(etapa.pulido, i);
-						t.asignarTrabajo(colaPulido.get(0), i);
+						t.asignarTrabajo(colaPulido.get(0), i, etapa.pulido);
 						System.out.print("Le asignamos el auto "
 								+ colaPulido.get(0).getOT() + " al mecanico "
 								+ t.id + " para pulido, en t= " + i);
@@ -233,7 +233,7 @@ public class Simulacion {
 					// si era la etapa armado
 					if (t.getTrabajoActual().getEtapa() == etapa.armado) {
 						colaPulido.add(t.getTrabajoActual());
-						reordenarColaPulido();
+						//reordenarColaPulido();
 					}
 
 					// si era la etapa final...
@@ -360,7 +360,7 @@ public class Simulacion {
 				// si esta desocupado, le tratamos de asignar trabajo
 				if (t.ocupado(hora) == false) {
 					if (copiaColaDesabolladura.size() != 0) {
-						t.asignarTrabajo(copiaColaDesabolladura.get(0), hora);
+						t.asignarTrabajo(copiaColaDesabolladura.get(0), hora, etapa.desabolladura);
 						t.trabajoActual.llegadaDesabolladura = hora;
 						copiaColaDesabolladura.remove(0);
 					}
@@ -371,6 +371,7 @@ public class Simulacion {
 				if (t.ocupado(hora) == true && t.ocupado(hora + 1) == false) {
 					// agregamos el trabajo a la siguiente cola del proceso
 					t.trabajoActual.salidaDesabolladura = hora;
+					t.trabajoActual.setEtapa(null);
 
 					copiaColaPintura.add(t.getTrabajoActual());
 
@@ -385,8 +386,9 @@ public class Simulacion {
 				// si esta desocupado, le tratamos de asignar trabajo
 				if (t.ocupado(hora) == false) {
 					if (copiaColaPintura.size() != 0) {
+						
+						t.asignarTrabajo(copiaColaPintura.get(0), hora, etapa.pintura);
 						t.trabajoActual.llegadaPintura = hora;
-						t.asignarTrabajo(copiaColaPintura.get(0), hora);
 						copiaColaPintura.remove(0);
 					}
 				}
@@ -397,6 +399,7 @@ public class Simulacion {
 					// agregamos el trabajo a la siguiente cola del proceso
 					copiaColaArmado.add(t.getTrabajoActual());
 					t.trabajoActual.salidaPintura = hora;
+					t.trabajoActual.setEtapa(null);
 
 					// le quitamos al trabajador ese trabajo
 					t.setTrabajoActual(null);
@@ -409,13 +412,13 @@ public class Simulacion {
 				// si esta desocupado, le tratamos de asignar trabajo
 				if (t.ocupado(hora) == false) {
 					if (copiaColaArmado.size() != 0) {
-						t.asignarTrabajo(copiaColaArmado.get(0), hora);
+						t.asignarTrabajo(copiaColaArmado.get(0), hora, etapa.armado);
 						t.trabajoActual.llegadaArmado = hora;
 						copiaColaArmado.remove(0);
 					}
 
 					else if (copiaColaPulido.size() != 0) {
-						t.asignarTrabajo(copiaColaPulido.get(0), hora);
+						t.asignarTrabajo(copiaColaPulido.get(0), hora, etapa.pulido);
 						t.trabajoActual.llegadaPulido = hora;
 						copiaColaPulido.remove(0);
 					}
@@ -429,6 +432,7 @@ public class Simulacion {
 					if (t.getTrabajoActual().getEtapa() == etapa.armado)
 						copiaColaPulido.add(t.getTrabajoActual());
 					t.trabajoActual.salidaArmado = hora;
+					t.trabajoActual.setEtapa(null);
 
 					// si era la etapa final...
 					if (t.getTrabajoActual().getEtapa() == etapa.pulido) {
@@ -440,36 +444,62 @@ public class Simulacion {
 					t.setTrabajoActual(null);
 
 				}
+			}
 				hora++;
+				seguir=false;
+				
 				// si no queda ningun vehículo en el sistema se para
-				for (int k = 0; k < copiaDesabolladores.size(); k++) {
-					if (copiaDesabolladores.get(k) != null)
-						continue;
+				for (int k = 0; k < copiaDesabolladores.size(); k++) 
+				{
+					Auto aRevisar=copiaDesabolladores.get(k).trabajoActual;
+					if (aRevisar!=null)
+						{
+						seguir=true;
+						break;
+						}
+					
 				}
+				
 
+			if(!seguir)
+			{
 				for (int k = 0; k < copiaPintores.size(); k++) {
-					if (copiaPintores.get(k) != null)
-						continue;
+					Auto aRevisar=copiaPintores.get(k).trabajoActual;
+					if (aRevisar!=null)
+						{
+						seguir=true;
+						break;
+						}
 				}
+			}
 
-				for (int k = 0; k < copiaMecanicos.size(); k++) {
-					if (copiaMecanicos.get(k) != null)
-						continue;
+			if(!seguir)
+			{
+				for (int k = 0; k < copiaMecanicos.size(); k++) 
+				{
+					Auto aRevisar=copiaMecanicos.get(k).trabajoActual;
+					if (aRevisar!=null)
+					{
+						seguir=true;
+						break;
+					}
 				}
+			}
 				
 				if( copiaColaPintura.size()!=0 || copiaColaDesabolladura.size()!=0 || copiaColaPulido.size()!=0
 						|| copiaColaArmado.size()!=0)
-					continue;
+					seguir=true;
 
-				seguir = false;
+				
 
 			}
 
 		}
 
+
 		
 
-	}
+	
 
 	private void imprimirRegistro() {
 		// TODO Auto-generated method stub
@@ -602,12 +632,19 @@ public class Simulacion {
 	
 	public Auto Clone(Auto a)
 	{
+		//ver que pasa si no tiene auto el trabajador, osea es null
+		if(a!=null)
+		{
 		Auto b = new Auto(a.OT,  a.tiempoAutorizacion,a.requiereMecanico, a.tipoSiniestro);
 		return b;
+		}
+		else return null;
 	}
 	
 	public Trabajador Clone(Trabajador a)
 	{
+		if(a!=null)
+		{
 		char l='a';
 		if(a.tipo==tipoTrabajador.pintor)
 			l='p';
@@ -618,7 +655,17 @@ public class Simulacion {
 		
 		Trabajador b = new Trabajador (a.id, l);
 		b.trabajoActual=Clone(a.trabajoActual);
+		
+		//copio calendario
+		for(int i=0; i< a.calendario.length;i++)
+		{
+			b.calendario[i]=a.calendario[i];
+		}
+		
 		return b;
+		}
+		
+		else return null;
 	
 	}
 

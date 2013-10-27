@@ -41,12 +41,17 @@ public class Trabajador {
 
 	
 	//le asigna al trabajador el trabajo propio de 'auto', el dia 'dia'
-	public void asignarTrabajo(Auto auto, int hora) {
+	public void asignarTrabajo(Auto auto, int hora, etapa e) {
 
 		//le llenamos el horario al trabajador
 		trabajoActual=auto;
-		
-		for(int i = hora; i < hora+auto.getTiempoDesabolladura() && hora+auto.getTiempoDesabolladura() < 365*2*8; i++)
+		//completar, se debe saber en que proceso esta...
+		int tiempo=0;
+		if(e==etapa.desabolladura) tiempo=auto.getTiempoDesabolladura();
+		else if(e==etapa.pintura)tiempo=auto.getTiempoPintura();
+		else if(e==etapa.armado)tiempo=auto.getTiempoArmado();
+		else tiempo=auto.getTiempoPulido();
+		for(int i = hora; i < hora+tiempo && hora+tiempo < 365*2*8; i++)
 		{
 			calendario[i]=true;
 		}

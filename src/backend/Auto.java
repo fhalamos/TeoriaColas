@@ -92,10 +92,31 @@ public class Auto {
 		return tiempoDesabolladura;
 	}
 	
+	public int getTiempoPintura()
+	{
+		return tiempoPintura;
+	}
+	
+	public int getTiempoArmado()
+	{
+		return tiempoArmado;
+	}
+	
+	public int getTiempoPulido()
+	{
+		return tiempoPulido;
+	}
+	
 	public etapa getEtapa()
 	{
 		return etapa_;
 	}
+	
+	public void setEtapa(etapa e)
+	{
+	 etapa_=e;	
+	}
+	
 	
 	public String getOT()
 	{
