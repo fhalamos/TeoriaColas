@@ -24,6 +24,7 @@ public class Simulacion {
 	int cantidadDesabolladores;
 	int cantidadMecanicos;
 	
+	
 	List<Trabajador> pintores;
 	List<Trabajador> desabolladores;
 	List<Trabajador> mecanicos;
@@ -215,16 +216,164 @@ public class Simulacion {
 		
 	}
 
-	private List<Auto> getColaTotalDesabolladura(){
-	
-		List<Auto> trabajosActuales= new ArrayList<Auto>();
-		for(int i=0; i<desabolladores.size(); i++)
+	private List<Auto> calcularDemoras(
+			List<Auto> procesoSiguiente, List<Auto> procesoActual, int hora){
+		
+		boolean seguir=true;
+		
+		while(seguir)
 		{
-			for(int j=0; j<desabolladores.get(i).trabajoActual.size(); j++)
+			
+			
+			
+			
+
+			//revisamos la situacion de cada trabajador
+			
+			//desabolladores...
+			for(Trabajador t : desabolladores)
 			{
-				trabajosActuales.add(desabolladores.get(i).trabajoActual.get(j));
+				//si esta desocupado, le tratamos de asignar trabajo
+				if (t.ocupado(hora)==false)
+				{
+					if(colaDesabolladura.size()!=0)
+					{
+						t.asignarTrabajo(colaDesabolladura.get(0), hora);
+						t.trabajoActual.llegadaDesabolladura=hora;
+						colaDesabolladura.remove(0);
+					}
+				}
+				
+				//si esta ocupado, pero es su ultimo dia de trabajo, tiene que mover su trabajo a la siguiente cola del proceso
+				if(t.ocupado(hora)==true && t.ocupado(hora+1)==false)
+				{
+					//agregamos el trabajo a la siguiente cola del proceso
+					t.trabajoActual.salidaDesabolladura=hora;
+					
+					colaPintura.add(t.getTrabajoActual());
+					
+					
+					
+					
+					//le quitamos al trabajador ese trabajo
+					t.setTrabajoActual(null);
+				}
+
 			}
+			
+			
+			//pintores...
+			for(Trabajador t : pintores)
+			{
+				//si esta desocupado, le tratamos de asignar trabajo
+				if (t.ocupado(hora)==false)
+				{
+					if(colaPintura.size()!=0)
+					{
+						t.trabajoActual.llegadaPintura=hora;
+						t.asignarTrabajo(colaPintura.get(0), hora);
+						colaPintura.remove(0);
+					}
+				}
+				
+				//si esta ocupado, pero es su ultimo dia de trabajo, tiene que mover su trabajo a la siguiente cola del proceso
+				if(t.ocupado(hora)==true && t.ocupado(hora+1)==false)
+				{
+					//agregamos el trabajo a la siguiente cola del proceso
+					colaArmado.add(t.getTrabajoActual());
+					t.trabajoActual.salidaPintura=hora;
+					
+					
+					//le quitamos al trabajador ese trabajo
+					t.setTrabajoActual(null);
+				}
+
+			}
+			
+			//mecanicos...
+			for(Trabajador t : mecanicos)
+			{
+				//si esta desocupado, le tratamos de asignar trabajo
+				if (t.ocupado(hora)==false)
+				{
+					if(colaArmado.size()!=0)
+					{
+						t.asignarTrabajo(colaArmado.get(0), hora);
+						t.trabajoActual.llegadaArmado=hora;
+						colaArmado.remove(0);
+					}
+					
+					else if(colaPulido.size()!=0)
+					{
+						t.asignarTrabajo(colaPulido.get(0), hora);
+						t.trabajoActual.llegadaPulido=hora;
+						colaPulido.remove(0);
+					}
+				}
+				
+				//si esta ocupado, pero es su ultimo dia de trabajo, tiene que mover su trabajo a la siguiente cola del proceso
+				if(t.ocupado(hora)==true && t.ocupado(hora+1)==false)
+				{
+					//agregamos el trabajo a la siguiente cola del proceso
+					//si era la etapa armado
+					if(t.getTrabajoActual().getEtapa()==etapa.armado)
+						colaPulido.add(t.getTrabajoActual());
+						t.trabajoActual.salidaArmado=hora;
+						
+					
+					
+					//si era la etapa final...
+					if(t.getTrabajoActual().getEtapa()==etapa.pulido)
+					{
+						t.getTrabajoActual().salidaPulido=hora;
+						colaAutosListos.add(t.getTrabajoActual());
+					}
+					
+					
+					          
+					//le quitamos al trabajador ese trabajo
+					t.setTrabajoActual(null);
+					
+					
+					
+					
+				}
+				i++;
+				//si no queda ningun vehículo en el sistema se para
+				for(int k=0; k<desabolladores.size();k++)
+				{
+				if(desabolladores.get(k)!=null)
+					continue;
+				}
+				
+				for(int k=0; k<pintores.size();k++)
+				{
+				if(pintores.get(k)!=null)
+					continue;
+				}
+				
+				for(int k=0; k<mecanicos.size();k++)
+				{
+				if(mecanicos.get(k)!=null)
+					continue;
+				}
+				
+				seguir=false;
+
+			}
+			
+			
+			
 		}
+	
+		        
+		
+		}
+		
+		
+		
+		}
+		
 		
 	
 	}

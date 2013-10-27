@@ -8,7 +8,7 @@ public class Trabajador {
 	int id;
 	boolean [] calendario;
 	tipoTrabajador tipo;
-	Auto trabajoActual;
+	public Auto trabajoActual;
 	
 	//Date now = new Date();
 	
