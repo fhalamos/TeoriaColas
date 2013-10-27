@@ -141,7 +141,7 @@ public class ExcelSheetReader {
 			
 			
 			//instanciamos el auto
-			Auto auto = new Auto(OT, fecha, requiereMecanica+"", tipoSiniestro);
+			Auto auto = new Auto(OT, fecha*8, requiereMecanica+"", tipoSiniestro);
 			autos.add(auto);
 			
 			//System.out.println();

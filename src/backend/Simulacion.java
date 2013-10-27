@@ -38,6 +38,13 @@ public class Simulacion {
 	List<Auto> colaPulido;
 	List<Auto> colaAutosListos;
 	
+	//List<Auto> autosEnDesabolladura;
+	//List<Auto> autosEncolaPintura;
+	//List<Auto> autosEncolaArmado;
+	//List<Auto> autosEncolaPulido;
+	//List<Auto> autosEncolaAutosListos;
+	
+	
 	
 	public Simulacion(int cP, int cD, int cM)
 	{
@@ -73,22 +80,22 @@ public class Simulacion {
 		
 		
 		//simulamos los 2 años
-		for(int i=0; i<365*2; i++)
+		for(int i=0; i<365*2*8; i++)
 		{
 			//vemos todos los autos que llegan el dia i llego un auto nuevo
-			int fechaLlegada = autosPendientes.get(0).getFechaAutorizacion();
-			while(i==fechaLlegada)
-			{
-				colaDesabolladura.add(autosPendientes.get(0));
-				reordenarColaDesabolladura(colaDesabolladura);
-				autosPendientes.remove(0);
-				fechaLlegada=autosPendientes.get(0).getFechaAutorizacion();
+			if(autosPendientes.size()!=0)
+			{	
+				int llegada = autosPendientes.get(0).getTiempoAutorizacion();
+				while(i==llegada)
+				{
+					colaDesabolladura.add(autosPendientes.get(0));
+					reordenarColaDesabolladura(colaDesabolladura);
+					autosPendientes.remove(0);
+					llegada=autosPendientes.get(0).getTiempoAutorizacion();
+				}
 			}
 			
-			
-			
-			
-			
+
 			//revisamos la situacion de cada trabajador
 			
 			//desabolladores...
@@ -169,7 +176,7 @@ public class Simulacion {
 					if(t.getTrabajoActual().getEtapa()==etapa.pulido)
 						colaAutosListos.add(t.getTrabajoActual());
 					
-					//si era la etapa final...
+					//si era la etapa armado
 					if(t.getTrabajoActual().getEtapa()==etapa.armado)
 						colaPulido.add(t.getTrabajoActual());
 					          

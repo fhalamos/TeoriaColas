@@ -36,7 +36,7 @@ public class VentanaPrincipal extends JFrame {
 					VentanaPrincipal frame = new VentanaPrincipal();
 					frame.setVisible(true);
 					
-					simulacion = new Simulacion(5,5,5);
+					simulacion = new Simulacion(1,1,1);
 					simulacion.correr();
 					
 					

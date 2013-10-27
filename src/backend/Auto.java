@@ -7,7 +7,7 @@ public class Auto {
 	
 	
 	String OT;
-	int fechaAutorizacion;
+	int tiempoAutorizacion;
 	String requiereMecanico;
 	String tipoSiniestro;
 	
@@ -24,19 +24,19 @@ public class Auto {
 	int salidaPulido;
 	
 	
-	public Auto (String OT, int fechaAutorizacion, String requiereMecanico, String tipoSiniestro){
+	public Auto (String OT, int tiempoAutorizacion, String requiereMecanico, String tipoSiniestro){
 		this.OT=OT;
-		this.fechaAutorizacion=fechaAutorizacion;
+		this.tiempoAutorizacion=tiempoAutorizacion;
 		this.requiereMecanico=requiereMecanico;
 		this.tipoSiniestro=tipoSiniestro;
 		
 		//asignarTiempoDesabolladura, segun promedio del excel
 		if(tipoSiniestro.equals("G"))
-			tiempoDesabolladura=7;
+			tiempoDesabolladura=7*8;
 		if(tipoSiniestro.equals("G"))
-			tiempoDesabolladura=3;
+			tiempoDesabolladura=3*8;
 		if(tipoSiniestro.equals("G"))
-			tiempoDesabolladura=2;
+			tiempoDesabolladura=2*8;
 		
 		 
 		 llegadaDesabolladura=0;
@@ -51,13 +51,13 @@ public class Auto {
 	
 	public String imprimir()
 	{
-		return "Auto "+OT+": Fecha autorizacion: "+fechaAutorizacion+" Requiere Mecanico: "+requiereMecanico+" Tipo Siniestro: "+tipoSiniestro;
+		return "Auto "+OT+": Fecha autorizacion: "+tiempoAutorizacion+" Requiere Mecanico: "+requiereMecanico+" Tipo Siniestro: "+tipoSiniestro;
 		
 	}
 
-	public int getFechaAutorizacion() {
+	public int getTiempoAutorizacion() {
 		// TODO Auto-generated method stub
-		return fechaAutorizacion;
+		return tiempoAutorizacion;
 	}
 	
 	public int getTiempoDesabolladura()

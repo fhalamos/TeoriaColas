@@ -27,7 +27,7 @@ public class Trabajador {
 			
 		
 		//creo que por defecto el arreglo viene con falses
-		calendario = new boolean [365*2];
+		calendario = new boolean [365*2*8];
 		
 	}
 	
@@ -39,12 +39,12 @@ public class Trabajador {
 
 	
 	//le asigna al trabajador el trabajo propio de 'auto', el dia 'dia'
-	public void asignarTrabajo(Auto auto, int dia) {
+	public void asignarTrabajo(Auto auto, int hora) {
 
 		//le llenamos el horario al trabajador
 		trabajoActual=auto;
 		
-		for(int i = dia; i < dia+auto.getTiempoDesabolladura(); i++)
+		for(int i = hora; i < hora+auto.getTiempoDesabolladura(); i++)
 		{
 			calendario[i]=true;
 		}
