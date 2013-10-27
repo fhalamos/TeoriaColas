@@ -79,7 +79,7 @@ public class Simulacion {
 		
 		
 		
-		//simulamos los 2 años
+		//simulamos los 2 años (en horas)
 		for(int i=0; i<365*2*8; i++)
 		{
 			//vemos todos los autos que llegan el dia i llego un auto nuevo
@@ -89,9 +89,23 @@ public class Simulacion {
 				while(i==llegada)
 				{
 					colaDesabolladura.add(autosPendientes.get(0));
+					System.out.print("Llego el auto "+autosPendientes.get(0).getOT()+" en t= "+i + " al taller.");
+					int tiempoDesabolladoListoAproximado= proximoTrabajadorLibre(tipoTrabajador.desabollador, i)+ autosPendientes.get(0).tiempoDesabolladura;
+					int tiempoPintadoListoAproximado = proximoTrabajadorLibre(tipoTrabajador.pintor, tiempoDesabolladoListoAproximado)+ autosPendientes.get(0).tiempoPintura;
+					int tiempoMecanicoListoAproximado = proximoTrabajadorLibre(tipoTrabajador.mecanico, tiempoPintadoListoAproximado)+ autosPendientes.get(0).tiempoArmado+ autosPendientes.get(0).tiempoPulido;
+					
+					//System.out.print("Estara listo el "+tiempoMecanicoListoAproximado+" (en horas)");
+					//System.out.println();
+					
+					System.out.print("Ingresamos a cola desabolladura a "+autosPendientes.get(0).getOT()+" en t= "+i);
+					System.out.println();
+					
 					reordenarColaDesabolladura(colaDesabolladura);
 					autosPendientes.remove(0);
-					llegada=autosPendientes.get(0).getTiempoAutorizacion();
+					if(autosPendientes.size()!=0)
+						llegada=autosPendientes.get(0).getTiempoAutorizacion();
+					else
+						break;
 				}
 			}
 			
@@ -107,7 +121,11 @@ public class Simulacion {
 				{
 					if(colaDesabolladura.size()!=0)
 					{
+						
+						colaDesabolladura.get(0).fijarTiemposTrabajo(etapa.desabolladura, i);
 						t.asignarTrabajo(colaDesabolladura.get(0), i);
+						System.out.print("Le asignamos el auto "+colaDesabolladura.get(0).getOT()+" al desabollador "+t.id+" en t= "+i);
+						System.out.println();
 						colaDesabolladura.remove(0);
 					}
 				}
@@ -134,7 +152,11 @@ public class Simulacion {
 				{
 					if(colaPintura.size()!=0)
 					{
+						colaPintura.get(0).fijarTiemposTrabajo(etapa.pintura, i);
 						t.asignarTrabajo(colaPintura.get(0), i);
+						System.out.print("Le asignamos el auto "+colaPintura.get(0).getOT()+" al pintor "+t.id+" en t= "+i);
+						System.out.println();
+						
 						colaPintura.remove(0);
 					}
 				}
@@ -160,13 +182,20 @@ public class Simulacion {
 				{
 					if(colaArmado.size()!=0)
 					{
+						colaArmado.get(0).fijarTiemposTrabajo(etapa.armado, i);
 						t.asignarTrabajo(colaArmado.get(0), i);
+						System.out.print("Le asignamos el auto "+colaArmado.get(0).getOT()+" al mecanico "+t.id+" para armado, en t= "+i);
+						System.out.println();
 						colaArmado.remove(0);
 					}
 					
 					else if(colaPulido.size()!=0)
 					{
+						colaPulido.get(0).fijarTiemposTrabajo(etapa.pulido, i);
 						t.asignarTrabajo(colaPulido.get(0), i);
+						System.out.print("Le asignamos el auto "+colaPulido.get(0).getOT()+" al mecanico "+t.id+" para pulido, en t= "+i);
+						System.out.println();
+						
 						colaPulido.remove(0);
 					}
 				}
@@ -177,8 +206,10 @@ public class Simulacion {
 					//agregamos el trabajo a la siguiente cola del proceso
 					//si era la etapa armado
 					if(t.getTrabajoActual().getEtapa()==etapa.armado)
+					{
 						colaPulido.add(t.getTrabajoActual());
 						reordenarColaPulido();
+					}
 					
 					
 					//si era la etapa final...
@@ -200,6 +231,47 @@ public class Simulacion {
 		
 	}
 	
+	private int proximoTrabajadorLibre(tipoTrabajador tipoTrabajador, int i) {
+		// TODO Auto-generated method stub
+		int tiempoMinimo = Integer.MAX_VALUE;
+		
+		if(tipoTrabajador==tipoTrabajador.desabollador)
+		{
+			for(Trabajador d : desabolladores)
+			{
+				int tiempoLiberacion = d.proximoTiempoLibreDesde(i);
+				if(tiempoLiberacion<tiempoMinimo)
+					tiempoMinimo = tiempoLiberacion;
+			}
+			return tiempoMinimo;
+		}
+		
+		if(tipoTrabajador==tipoTrabajador.pintor)
+		{
+			for(Trabajador d : pintores)
+			{
+				int tiempoLiberacion = d.proximoTiempoLibreDesde(i);
+				if(tiempoLiberacion<tiempoMinimo)
+					tiempoMinimo = tiempoLiberacion;
+			}
+			return tiempoMinimo;
+		}
+		
+		if(tipoTrabajador==tipoTrabajador.mecanico)
+		{
+			for(Trabajador d : mecanicos)
+			{
+				int tiempoLiberacion = d.proximoTiempoLibreDesde(i);
+				if(tiempoLiberacion<tiempoMinimo)
+					tiempoMinimo = tiempoLiberacion;
+			}
+			return tiempoMinimo;
+		}
+		
+		return 0;
+		
+	}
+
 	private void reordenarColaPulido() {
 		// PENDIENTE
 		
@@ -269,15 +341,15 @@ public class Simulacion {
 		
 		//instanciamos pintores
 		for(int i=0; i<cantidadPintores;i++)
-			pintores.add(new Trabajador(i, 'p'));
+			pintores.add(new Trabajador("Pintor"+i, 'p'));
 
 		// instanciamos desabolladore
 		for (int i = 0; i < cantidadDesabolladores; i++) 
-			desabolladores.add(new Trabajador(i, 'd'));
+			desabolladores.add(new Trabajador("Desabollador"+i, 'd'));
 
 		// instanciamos mecanicos
 		for (int i = 0; i < cantidadMecanicos; i++) 
-			mecanicos.add(new Trabajador(i, 'm'));
+			mecanicos.add(new Trabajador("Mecanico"+i, 'm'));
 		
 	}
 	
