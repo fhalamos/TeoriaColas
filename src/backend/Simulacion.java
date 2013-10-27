@@ -13,6 +13,10 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import java.io.File;
+import java.io.FileWriter;
+
+
 public class Simulacion {
 
 	int cantidadPintores;
@@ -24,7 +28,8 @@ public class Simulacion {
 	List<Trabajador> desabolladores;
 	List<Trabajador> mecanicos;
 	
-
+	List<String> lineas;
+	
 	// autos que aun no "han llegado" segun la simulacion
 	List<Auto> autosPendientes;
 	
@@ -60,6 +65,9 @@ public class Simulacion {
 		
 		instanciarPersonal();
 		cargarAutosDeExcel();
+		
+		//lineas dnd se imprime el output
+		lineas= new ArrayList<String>();
 
 	}
 
@@ -76,6 +84,7 @@ public class Simulacion {
 				int llegada = autosPendientes.get(0).getTiempoAutorizacion();
 				while (i == llegada) {
 					colaDesabolladura.add(autosPendientes.get(0));
+					
 					System.out.print("Llego el auto "
 							+ autosPendientes.get(0).getOT() + " en t= " + i
 							+ " al taller.");
@@ -99,7 +108,7 @@ public class Simulacion {
 							+ autosPendientes.get(0).getOT() + " en t= " + i);
 					System.out.println();
 
-					reordenarColaDesabolladura(colaDesabolladura);
+					//reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
 					autosPendientes.remove(0);
 					if (autosPendientes.size() != 0)
 						llegada = autosPendientes.get(0)
@@ -293,7 +302,7 @@ public class Simulacion {
 	}
 	
 
-	private List<Auto> calcularDemoras(int hora, List<Auto> copiaColaDesabolladura, List<Auto>copiaColaPintura,
+	private void calcularDemoras(int hora, List<Auto> copiaColaDesabolladura, List<Auto>copiaColaPintura,
 			List<Auto> copiaColaArmado, List<Auto> copiaColaPulido) {
 
 		List<Trabajador> copiaDesabolladores= new ArrayList<Trabajador>();
@@ -437,8 +446,35 @@ public class Simulacion {
 
 		}
 
-		return null;
+		imprimirRegistro();
 
+	}
+
+	private void imprimirRegistro() {
+		// TODO Auto-generated method stub
+		/* Clase que permite escribir en un archivo de texto */
+
+		try {
+			// Crear un objeto File se encarga de crear o abrir acceso a un
+			// archivo que se especifica en su constructor
+			File archivo = new File("output.txt");
+
+			// Crear objeto FileWriter que sera el que nos ayude a escribir
+			// sobre archivo
+			FileWriter escribir = new FileWriter(archivo, true);
+
+			// Escribimos en el archivo con el metodo write
+			for (int i = 0; i < lineas.size(); i++)
+				escribir.write(lineas.get(i));
+
+			// Cerramos la conexion
+			escribir.close();
+		}
+
+		// Si existe un problema al escribir cae aqui
+		catch (Exception e) {
+			System.out.println("Error al escribir");
+		}
 	}
 
 	private void reordenarColaDesabolladura( Auto aIngresar, int posicion,int hora) {
@@ -525,7 +561,6 @@ public class Simulacion {
 	{
 		Auto b = new Auto(a.OT,  a.tiempoAutorizacion,a.requiereMecanico, a.tipoSiniestro);
 		return b;
-	
 	}
 	
 	public Trabajador Clone(Trabajador a)
