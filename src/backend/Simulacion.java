@@ -165,10 +165,14 @@ public class Simulacion {
 				if(t.ocupado(i)==true && t.ocupado(i+1)==false)
 				{
 					//agregamos el trabajo a la siguiente cola del proceso
-					//if(t.getTrabajoActual().)
+					//si era la etapa final...
+					if(t.getTrabajoActual().getEtapa()==etapa.pulido)
+						colaAutosListos.add(t.getTrabajoActual());
 					
-					colaAutosListos.add(t.getTrabajoActual());
-					
+					//si era la etapa final...
+					if(t.getTrabajoActual().getEtapa()==etapa.armado)
+						colaPulido.add(t.getTrabajoActual());
+					          
 					//le quitamos al trabajador ese trabajo
 					t.setTrabajoActual(null);
 				}

@@ -63,5 +63,10 @@ public class Auto {
 	{
 		return tiempoDesabolladura;
 	}
+	
+	public etapa getEtapa()
+	{
+		return etapa;
+	}
 
 }

@@ -60,4 +60,6 @@ public class Trabajador {
 	{
 		trabajoActual=auto;
 	}
+	
+	
 }
