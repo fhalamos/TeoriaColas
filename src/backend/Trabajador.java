@@ -47,10 +47,24 @@ public class Trabajador {
 		trabajoActual=auto;
 		//completar, se debe saber en que proceso esta...
 		int tiempo=0;
-		if(e==etapa.desabolladura) tiempo=auto.getTiempoDesabolladura();
-		else if(e==etapa.pintura)tiempo=auto.getTiempoPintura();
-		else if(e==etapa.armado)tiempo=auto.getTiempoArmado();
-		else tiempo=auto.getTiempoPulido();
+		if(e==etapa.desabolladura) {
+			tiempo=auto.getTiempoDesabolladura();
+			auto.etapa_=etapa.desabolladura;
+		}
+		
+		else if(e==etapa.pintura)
+		{
+			tiempo=auto.getTiempoPintura();
+			auto.etapa_=etapa.pintura;
+		}
+		else if(e==etapa.armado){
+			tiempo=auto.getTiempoArmado();
+			auto.etapa_=etapa.armado;
+		}
+		else {tiempo=auto.getTiempoPulido();
+		auto.etapa_=etapa.pulido;
+		}
+		
 		for(int i = hora; i < hora+tiempo && hora+tiempo < 365*2*8; i++)
 		{
 			calendario[i]=true;

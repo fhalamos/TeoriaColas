@@ -23,7 +23,7 @@ public class Simulacion {
 	int cantidadDesabolladores;
 	int cantidadMecanicos;
 	int iteracion;
-	List demoras;
+	List<Integer> demoras;
 
 	List<Trabajador> pintores;
 	List<Trabajador> desabolladores;
@@ -70,6 +70,7 @@ public class Simulacion {
 		
 		//lineas dnd se imprime el output
 		lineas= new ArrayList<String>();
+		demoras=new ArrayList<Integer>();
 
 	}
 
@@ -440,14 +441,26 @@ public class Simulacion {
 					// agregamos el trabajo a la siguiente cola del proceso
 					// si era la etapa armado
 					if (t.getTrabajoActual().getEtapa() == etapa.armado)
-						copiaColaPulido.add(t.getTrabajoActual());
+						{copiaColaPulido.add(t.getTrabajoActual());
 					t.trabajoActual.salidaArmado = hora;
 					t.trabajoActual.setEtapa(null);
+						}
 
 					// si era la etapa final...
 					if (t.getTrabajoActual().getEtapa() == etapa.pulido) {
 						t.getTrabajoActual().salidaPulido = hora;
-						demoras.set(iteracion, (int)demoras.get(iteracion)+t.getTrabajoActual().salidaPulido);						
+						int dem=0;
+						
+						// si tira error es pq se esta en el primer veh que sale
+						try{
+							 dem=  demoras.get(iteracion);
+						   }
+						
+						catch(Exception e){
+							demoras.add(dem);
+						}
+						
+						demoras.set(iteracion, dem+t.getTrabajoActual().salidaPulido);						
 					}
 
 					// le quitamos al trabajador ese trabajo
@@ -575,7 +588,8 @@ public class Simulacion {
 		
 		calcularDemoras(hora, copiaColaDesabolladura, copiaColaPintura, copiaColaArmado, copiaColaPulido);
 		iteracion++;
-		reordenarColaDesabolladura(aIngresar,  posicion++,hora); 
+		posicion++;
+		reordenarColaDesabolladura(aIngresar,posicion,hora); 
 
 		
 		}
@@ -595,6 +609,8 @@ public class Simulacion {
 			
 						
 	  }
+	  
+	  demoras=new ArrayList<Integer>();
 	  
 	  ordenarCola(colaDesabolladura, pos, a);
 	}
