@@ -262,22 +262,56 @@ public class Simulacion {
 			}
 
 		}
-		calcularDemorasTotales();
-		imprimirRegistro();
+		imprimirCalcularDemorasTotales();
+		imprimirHistorialSimulacion();
 
 	}
 
-	private void calcularDemorasTotales() {
+	private void imprimirCalcularDemorasTotales() {
 
-		int sumaDemoras = 0;
+		int sumaDemorasOptimizadas = 0;
+		int sumaDemorasNoOptimizadas = 0;
 		for (int i = 0; i < colaAutosListos.size(); i++) {
-			sumaDemoras += colaAutosListos.get(i).salidaPulido
+			sumaDemorasOptimizadas += colaAutosListos.get(i).salidaPulido
 					- colaAutosListos.get(i).getTiempoAutorizacion();
+			sumaDemorasNoOptimizadas += colaAutosListos.get(i).tiempoDeReparacionSegunModeloActual;
 		}
 
-		int demoraPromedio = sumaDemoras / colaAutosListos.size();
-		System.out.print("----");
-		System.out.print(demoraPromedio);
+		int demoraPromedioOptimizadas = sumaDemorasOptimizadas
+				/ colaAutosListos.size();
+		int demoraPromedioNoOptimizadas = sumaDemorasNoOptimizadas
+				/ colaAutosListos.size();
+
+		// TODO Auto-generated method stub
+		/* Clase que permite escribir en un archivo de texto */
+
+		try {
+			// Crear un objeto File se encarga de crear o abrir acceso a un
+			// archivo que se especifica en su constructor
+			File archivo = new File("resultados.txt");
+			if (archivo.exists()) {
+				archivo.delete();
+				archivo = new File("resultados.txt");
+			}
+
+			// Crear objeto FileWriter que sera el que nos ayude a escribir
+			// sobre archivo
+			FileWriter escribir = new FileWriter(archivo, true);
+
+			escribir.write("Demora promedio luego de optimizacion:");
+			escribir.write(demoraPromedioOptimizadas + "horas" + "\n");
+
+			escribir.write("Demora promedio sin optimizacion:");
+			escribir.write(demoraPromedioNoOptimizadas + "horas" + "\n");
+
+			// Cerramos la conexion
+			escribir.close();
+		}
+
+		// Si existe un problema al escribir cae aqui
+		catch (Exception e) {
+			System.out.println("Error al escribir");
+		}
 
 	}
 
@@ -540,7 +574,7 @@ public class Simulacion {
 
 	}
 
-	private void imprimirRegistro() {
+	private void imprimirHistorialSimulacion() {
 		// TODO Auto-generated method stub
 		/* Clase que permite escribir en un archivo de texto */
 
