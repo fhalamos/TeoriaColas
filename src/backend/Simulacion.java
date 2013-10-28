@@ -86,11 +86,18 @@ public class Simulacion {
 				while (i == llegada) {
 
 					// colaDesabolladura.add(autosPendientes.get(0));
+					if(!hayDesabolladorDisponible(i))
+					{
 					reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
 					iteracion = 0;
 					if(demoras.size()==0)
 						System.out.println();
 					asignarAcola(autosPendientes.get(0));
+					}
+					
+					else colaDesabolladura.add(autosPendientes.get(0));
+					
+					
 
 					lineas.add("Llego el auto "
 							+ autosPendientes.get(0).getOT() + " en t= " + i
@@ -347,6 +354,7 @@ public class Simulacion {
 			List<Auto> copiaColaPintura, List<Auto> copiaColaArmado,
 			List<Auto> copiaColaPulido) {
 
+		//copiar estado del sistema
 		List<Trabajador> copiaDesabolladores = new ArrayList<Trabajador>();
 		List<Trabajador> copiaPintores = new ArrayList<Trabajador>();
 		List<Trabajador> copiaMecanicos = new ArrayList<Trabajador>();
@@ -360,7 +368,7 @@ public class Simulacion {
 		}
 
 		for (int i = 0; i < mecanicos.size(); i++) {
-			copiaMecanicos.add(Clone(pintores.get(i)));
+			copiaMecanicos.add(Clone(mecanicos.get(i)));
 		}
 
 		// ya está la nueva situacion a simular para que no se cambie la
@@ -433,19 +441,23 @@ public class Simulacion {
 			for (Trabajador t : copiaMecanicos) {
 				// si esta desocupado, le tratamos de asignar trabajo
 				if (t.ocupado(hora) == false) {
-					if (copiaColaArmado.size() != 0) {
+					
+					if (copiaColaPulido.size() != 0) {
+						t.asignarTrabajo(copiaColaPulido.get(0), hora,
+								etapa.pulido);
+						t.trabajoActual.llegadaPulido = hora;
+						copiaColaPulido.remove(0);
+					}
+					
+					else if (copiaColaArmado.size() != 0) 
+					{
 						t.asignarTrabajo(copiaColaArmado.get(0), hora,
 								etapa.armado);
 						t.trabajoActual.llegadaArmado = hora;
 						copiaColaArmado.remove(0);
 					}
 
-					else if (copiaColaPulido.size() != 0) {
-						t.asignarTrabajo(copiaColaPulido.get(0), hora,
-								etapa.pulido);
-						t.trabajoActual.llegadaPulido = hora;
-						copiaColaPulido.remove(0);
-					}
+					
 				}
 
 				// si esta ocupado, pero es su ultimo dia de trabajo, tiene que
@@ -467,16 +479,15 @@ public class Simulacion {
 
 							// si tira error es pq se esta en el primer veh que
 							// sale
-							try {
-								dem = demoras.get(iteracion);
+							
+							if(iteracion<demoras.size())
+							{
+								dem= demoras.get(iteracion);
 							}
-
-							catch (Exception e) {
-								demoras.add(dem);
-							}
+							else demoras.add(dem);
 
 							demoras.set(iteracion, dem
-									+ t.getTrabajoActual().salidaPulido);
+									+ (t.getTrabajoActual().salidaPulido-t.getTrabajoActual().llegadaDesabolladura));
 						}
 
 						// le quitamos al trabajador ese trabajo
@@ -485,7 +496,7 @@ public class Simulacion {
 					}
 			}
 			hora++;
-			seguir = false;
+			/*seguir = false;
 
 			// si no queda ningun vehículo en el sistema se para
 			for (int k = 0; k < copiaDesabolladores.size(); k++) {
@@ -522,6 +533,7 @@ public class Simulacion {
 					|| copiaColaPulido.size() != 0
 					|| copiaColaArmado.size() != 0)
 				seguir = true;
+				*/
 			if(hora==365*8*2-1)
 				seguir=false;
 		}
@@ -680,5 +692,20 @@ public class Simulacion {
 			return null;
 
 	}
+	
+	public boolean hayDesabolladorDisponible(int hora)
+	{
+		for (Trabajador t : desabolladores)
+		{
+			if(!t.ocupado(hora))
+				return true;
+				
+		}
+		
+		return false;
+		}
+		
+	}
+	
 
-}
+
