@@ -86,18 +86,11 @@ public class Simulacion {
 				while (i == llegada) {
 
 					// colaDesabolladura.add(autosPendientes.get(0));
-					if(!hayDesabolladorDisponible(i))
-					{
 					reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
 					iteracion = 0;
 					if(demoras.size()==0)
-						System.out.println();
+						System.out.print("DEMORAS VACIAS!");
 					asignarAcola(autosPendientes.get(0));
-					}
-					
-					else colaDesabolladura.add(autosPendientes.get(0));
-					
-					
 
 					lineas.add("Llego el auto "
 							+ autosPendientes.get(0).getOT() + " en t= " + i
@@ -262,22 +255,56 @@ public class Simulacion {
 			}
 
 		}
-		calcularDemorasTotales();
-		imprimirRegistro();
+		imprimirCalcularDemorasTotales();
+		imprimirHistorialSimulacion();
 
 	}
 
-	private void calcularDemorasTotales() {
+	private void imprimirCalcularDemorasTotales() {
 
-		int sumaDemoras = 0;
+		int sumaDemorasOptimizadas = 0;
+		int sumaDemorasNoOptimizadas =0;
 		for (int i = 0; i < colaAutosListos.size(); i++) {
-			sumaDemoras += colaAutosListos.get(i).salidaPulido
+			sumaDemorasOptimizadas += colaAutosListos.get(i).salidaPulido
 					- colaAutosListos.get(i).getTiempoAutorizacion();
+			sumaDemorasNoOptimizadas+=colaAutosListos.get(i).tiempoDeReparacionSegunModeloActual;
 		}
 
-		int demoraPromedio = sumaDemoras / colaAutosListos.size();
-		System.out.print("----");
-		System.out.print(demoraPromedio);
+		int demoraPromedioOptimizadas = sumaDemorasOptimizadas / colaAutosListos.size();
+		int demoraPromedioNoOptimizadas = sumaDemorasNoOptimizadas / colaAutosListos.size();
+		
+
+		// TODO Auto-generated method stub
+		/* Clase que permite escribir en un archivo de texto */
+
+		try {
+			// Crear un objeto File se encarga de crear o abrir acceso a un
+			// archivo que se especifica en su constructor
+			File archivo = new File("resultados.txt");
+			if(archivo.exists())
+			{
+				archivo.delete();
+				archivo = new File("resultados.txt");
+			}
+
+			// Crear objeto FileWriter que sera el que nos ayude a escribir
+			// sobre archivo
+			FileWriter escribir = new FileWriter(archivo, true);
+
+			escribir.write("Demora promedio luego de optimizacion:");
+			escribir.write(demoraPromedioOptimizadas + "horas"+"\n");
+			
+			escribir.write("Demora promedio sin optimizacion:");
+			escribir.write(demoraPromedioNoOptimizadas + "horas"+"\n");
+
+			// Cerramos la conexion
+			escribir.close();
+		}
+
+		// Si existe un problema al escribir cae aqui
+		catch (Exception e) {
+			System.out.println("Error al escribir");
+		}
 
 	}
 
@@ -354,7 +381,6 @@ public class Simulacion {
 			List<Auto> copiaColaPintura, List<Auto> copiaColaArmado,
 			List<Auto> copiaColaPulido) {
 
-		//copiar estado del sistema
 		List<Trabajador> copiaDesabolladores = new ArrayList<Trabajador>();
 		List<Trabajador> copiaPintores = new ArrayList<Trabajador>();
 		List<Trabajador> copiaMecanicos = new ArrayList<Trabajador>();
@@ -368,7 +394,7 @@ public class Simulacion {
 		}
 
 		for (int i = 0; i < mecanicos.size(); i++) {
-			copiaMecanicos.add(Clone(mecanicos.get(i)));
+			copiaMecanicos.add(Clone(pintores.get(i)));
 		}
 
 		// ya está la nueva situacion a simular para que no se cambie la
@@ -441,23 +467,19 @@ public class Simulacion {
 			for (Trabajador t : copiaMecanicos) {
 				// si esta desocupado, le tratamos de asignar trabajo
 				if (t.ocupado(hora) == false) {
-					
-					if (copiaColaPulido.size() != 0) {
-						t.asignarTrabajo(copiaColaPulido.get(0), hora,
-								etapa.pulido);
-						t.trabajoActual.llegadaPulido = hora;
-						copiaColaPulido.remove(0);
-					}
-					
-					else if (copiaColaArmado.size() != 0) 
-					{
+					if (copiaColaArmado.size() != 0) {
 						t.asignarTrabajo(copiaColaArmado.get(0), hora,
 								etapa.armado);
 						t.trabajoActual.llegadaArmado = hora;
 						copiaColaArmado.remove(0);
 					}
 
-					
+					else if (copiaColaPulido.size() != 0) {
+						t.asignarTrabajo(copiaColaPulido.get(0), hora,
+								etapa.pulido);
+						t.trabajoActual.llegadaPulido = hora;
+						copiaColaPulido.remove(0);
+					}
 				}
 
 				// si esta ocupado, pero es su ultimo dia de trabajo, tiene que
@@ -479,15 +501,17 @@ public class Simulacion {
 
 							// si tira error es pq se esta en el primer veh que
 							// sale
-							
-							if(iteracion<demoras.size())
+							if(demoras.size()>iteracion)
 							{
-								dem= demoras.get(iteracion);
+								dem = demoras.get(iteracion);
 							}
-							else demoras.add(dem);
+
+							else{
+								demoras.add(dem);
+							}
 
 							demoras.set(iteracion, dem
-									+ (t.getTrabajoActual().salidaPulido-t.getTrabajoActual().llegadaDesabolladura));
+									+ t.getTrabajoActual().salidaPulido);
 						}
 
 						// le quitamos al trabajador ese trabajo
@@ -496,7 +520,7 @@ public class Simulacion {
 					}
 			}
 			hora++;
-			/*seguir = false;
+			seguir = false;
 
 			// si no queda ningun vehículo en el sistema se para
 			for (int k = 0; k < copiaDesabolladores.size(); k++) {
@@ -533,14 +557,13 @@ public class Simulacion {
 					|| copiaColaPulido.size() != 0
 					|| copiaColaArmado.size() != 0)
 				seguir = true;
-				*/
 			if(hora==365*8*2-1)
 				seguir=false;
 		}
 
 	}
 
-	private void imprimirRegistro() {
+	private void imprimirHistorialSimulacion() {
 		// TODO Auto-generated method stub
 		/* Clase que permite escribir en un archivo de texto */
 
@@ -548,7 +571,11 @@ public class Simulacion {
 			// Crear un objeto File se encarga de crear o abrir acceso a un
 			// archivo que se especifica en su constructor
 			File archivo = new File("historialSimulacion.txt");
-
+			if(archivo.exists())
+			{
+				archivo.delete();
+				archivo = new File("historialSimulacion.txt");
+			}
 			// Crear objeto FileWriter que sera el que nos ayude a escribir
 			// sobre archivo
 			FileWriter escribir = new FileWriter(archivo, true);
@@ -607,16 +634,18 @@ public class Simulacion {
 	// asignar a la cola una vez sabida la posicion a tomar, ver mas CRITERIOS
 	// de aceptacion
 	private void asignarAcola(Auto a) {
-		if(demoras.size()==0)
-			System.out.println();
-		int comparar = (int) demoras.get(0);
-		int pos = 0;
-		for (int i = 0; i < demoras.size(); i++) { //i tenia valor 1
-			if (comparar > (int) demoras.get(i)) {
-				pos = i;
-				comparar = (int) demoras.get(i);
-			}
+		int pos=0;
+		if (demoras.size() != 0)
+		{
+			int comparar = (int) demoras.get(0);
+			pos = 0;
+			for (int i = 0; i < demoras.size(); i++) { // i tenia valor 1
+				if (comparar > (int) demoras.get(i)) {
+					pos = i;
+					comparar = (int) demoras.get(i);
+				}
 
+			}
 		}
 
 		demoras = new ArrayList<Integer>();
@@ -661,7 +690,7 @@ public class Simulacion {
 		// ver que pasa si no tiene auto el trabajador, osea es null
 		if (a != null) {
 			Auto b = new Auto(a.OT, a.tiempoAutorizacion, a.requiereMecanico,
-					a.tipoSiniestro);
+					a.tipoSiniestro, a.tiempoDeReparacionSegunModeloActual);
 			return b;
 		} else
 			return null;
@@ -692,20 +721,5 @@ public class Simulacion {
 			return null;
 
 	}
-	
-	public boolean hayDesabolladorDisponible(int hora)
-	{
-		for (Trabajador t : desabolladores)
-		{
-			if(!t.ocupado(hora))
-				return true;
-				
-		}
-		
-		return false;
-		}
-		
-	}
-	
 
-
+}
