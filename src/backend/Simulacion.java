@@ -170,6 +170,8 @@ public class Simulacion {
 								etapa.desabolladura, i);
 						t.asignarTrabajo(colaDesabolladura.get(0), i,
 								etapa.desabolladura);
+						t.trabajoActual.llegadaDesabolladura=i; 
+						
 						lineas.add("Le asignamos el auto "
 								+ colaDesabolladura.get(0).getOT()
 								+ " al desabollador " + t.id + " en t= " + i);
@@ -186,6 +188,7 @@ public class Simulacion {
 				if (i + 1 < 365 * 2 * 8)
 					if (t.ocupado(i) == true && t.ocupado(i + 1) == false) {
 						// agregamos el trabajo a la siguiente cola del proceso
+						t.trabajoActual.salidaDesabolladura=i;
 						colaPintura.add(t.getTrabajoActual());
 						reordenarColaPintura();
 
@@ -203,6 +206,7 @@ public class Simulacion {
 						colaPintura.get(0)
 								.fijarTiemposTrabajo(etapa.pintura, i);
 						t.asignarTrabajo(colaPintura.get(0), i, etapa.pintura);
+						t.trabajoActual.llegadaPintura=i;
 						System.out.print("Le asignamos el auto "
 								+ colaPintura.get(0).getOT() + " al pintor "
 								+ t.id + " en t= " + i);
@@ -220,6 +224,7 @@ public class Simulacion {
 				if (i + 1 < 365 * 2 * 8)
 					if (t.ocupado(i) == true && t.ocupado(i + 1) == false) {
 						// agregamos el trabajo a la siguiente cola del proceso
+						t.trabajoActual.salidaPintura=i;
 						colaArmado.add(t.getTrabajoActual());
 						// reordenarColaArmado();
 
@@ -236,6 +241,7 @@ public class Simulacion {
 					if (colaArmado.size() != 0) {
 						colaArmado.get(0).fijarTiemposTrabajo(etapa.armado, i);
 						t.asignarTrabajo(colaArmado.get(0), i, etapa.armado);
+						t.trabajoActual.llegadaArmado=i;
 						System.out.print("Le asignamos el auto "
 								+ colaArmado.get(0).getOT() + " al mecanico "
 								+ t.id + " para armado, en t= " + i);
@@ -250,6 +256,7 @@ public class Simulacion {
 					else if (colaPulido.size() != 0) {
 						colaPulido.get(0).fijarTiemposTrabajo(etapa.pulido, i);
 						t.asignarTrabajo(colaPulido.get(0), i, etapa.pulido);
+						t.trabajoActual.llegadaPulido=i;
 						System.out.print("Le asignamos el auto "
 								+ colaPulido.get(0).getOT() + " al mecanico "
 								+ t.id + " para pulido, en t= " + i);
@@ -268,13 +275,15 @@ public class Simulacion {
 						// agregamos el trabajo a la siguiente cola del proceso
 						// si era la etapa armado
 						if (t.getTrabajoActual().getEtapa() == etapa.armado) {
-
+							
+							t.trabajoActual.salidaArmado=i;
 							colaPulido.add(t.getTrabajoActual());
 							// reordenarColaPulido();
 						}
 
 						// si era la etapa final...
 						if (t.getTrabajoActual().getEtapa() == etapa.pulido)
+							t.trabajoActual.salidaPulido=i;
 							colaAutosListos.add(t.getTrabajoActual());
 
 						// le quitamos al trabajador ese trabajo
@@ -287,8 +296,84 @@ public class Simulacion {
 		imprimirCalcularDemorasTotales();
 		imprimirHistorialSimulacion();
 		imprimirSalidasEsperadas();
+		imprimirDemorasCadaEtapa();
 		
 
+	}
+	
+	private void imprimirDemorasCadaEtapa(){
+		
+		try {
+			// Crear un objeto File se encarga de crear o abrir acceso a un
+			// archivo que se especifica en su constructor
+			File archivo = new File("demorasCadaEtapa.txt");
+			if (archivo.exists()) {
+				archivo.delete();
+				archivo = new File("demorasCadaEtapa.txt");
+			}
+
+			// Crear objeto FileWriter que sera el que nos ayude a escribir
+			// sobre archivo
+			FileWriter escribir = new FileWriter(archivo, true);
+			int tiempoPromedioDesabolladura=0;
+			int tiempoPromedioPintura=0;
+			int tiempoPromedioArmado=0;
+			int tiempoPromedioPulido=0;
+			
+
+			for(int i=0; i<colaAutosListos.size();i++)
+			{
+				
+				tiempoPromedioDesabolladura+= (colaAutosListos.get(i).llegadaDesabolladura- 
+						colaAutosListos.get(i).tiempoAutorizacion);
+				tiempoPromedioPintura+= (colaAutosListos.get(i).llegadaPintura
+							-colaAutosListos.get(i).salidaDesabolladura);
+				tiempoPromedioArmado+= (colaAutosListos.get(i).llegadaArmado
+							- colaAutosListos.get(i).salidaPintura);
+				tiempoPromedioPulido+=(colaAutosListos.get(i).llegadaPulido
+							- colaAutosListos.get(i).salidaArmado);
+				
+				/*String tiempoColaDes="";
+				String tiempoColaPintura="";
+				String tiempoColaArmado="";
+				String tiempoColaPulido="";
+				
+				
+				 tiempoColaDes=Integer.toString(colaAutosListos.get(i).llegadaDesabolladura- 
+						colaAutosListos.get(i).tiempoAutorizacion);
+				 tiempoColaPintura= Integer.toString(colaAutosListos.get(i).llegadaPintura
+							-colaAutosListos.get(i).salidaDesabolladura);
+				 tiempoColaArmado= Integer.toString(colaAutosListos.get(i).llegadaArmado
+							- colaAutosListos.get(i).salidaPintura);
+				 tiempoColaPulido= Integer.toString(colaAutosListos.get(i).llegadaPulido
+							- colaAutosListos.get(i).salidaArmado);
+			
+				escribir.write("veh "+ colaAutosListos.get(i).OT + "\t Desabolladura: "+tiempoColaDes
+						+"\t Pintura: "+tiempoColaPintura + "\t Armado: "+tiempoColaArmado
+						+"\t Pulido: "+tiempoColaPulido+ " \n");*/
+			
+
+			// Cerramos la conexion
+			
+		}
+			tiempoPromedioDesabolladura=tiempoPromedioDesabolladura/(colaAutosListos.size());
+			tiempoPromedioPintura=tiempoPromedioPintura/(colaAutosListos.size());
+			tiempoPromedioArmado=tiempoPromedioArmado/(colaAutosListos.size());
+			tiempoPromedioPulido=tiempoPromedioPulido/(colaAutosListos.size());
+			
+			escribir.write("Desabolladura :" +tiempoPromedioDesabolladura
+					+"\t Pintura: "+tiempoPromedioPintura + "\t Armado: "+tiempoPromedioArmado
+					+"\t Pulido: "+tiempoPromedioPulido);
+			
+			escribir.close();
+		}
+
+		// Si existe un problema al escribir cae aqui
+		catch (Exception e) {
+			System.out.println("Error al escribir");
+		}
+		
+	
 	}
 
 	private void imprimirSalidasEsperadas() {

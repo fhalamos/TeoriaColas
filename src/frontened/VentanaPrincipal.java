@@ -84,6 +84,7 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				
+				
 				//cPintores, cDesabolladores, icMecanicos
 				simulacion = new Simulacion(2,5,4);
 				
