@@ -661,7 +661,7 @@ public class Simulacion {
 		// ver que pasa si no tiene auto el trabajador, osea es null
 		if (a != null) {
 			Auto b = new Auto(a.OT, a.tiempoAutorizacion, a.requiereMecanico,
-					a.tipoSiniestro);
+					a.tipoSiniestro, a.tiempoDeReparacionSegunModeloActual);
 			return b;
 		} else
 			return null;
