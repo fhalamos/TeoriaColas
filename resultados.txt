@@ -1,0 +1,12 @@
+Demora promedio luego de optimizacion:59horas.
+Demora promedio sin optimizacion:101horas.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 0 horas:5.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 10 horas:31.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 20 horas:38.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 30 horas:41.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 40 horas:45.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 50 horas:52.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 60 horas:63.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 70 horas:78.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 80 horas:89.
+Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura 90 horas:96.
