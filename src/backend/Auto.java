@@ -4,7 +4,7 @@ enum etapa{desabolladura, pintura, armado, pulido};
 
 public class Auto {
 
-	
+	int holgura=0;
 	
 	String OT;
 	int tiempoAutorizacion;
@@ -29,6 +29,7 @@ public class Auto {
 	int salidaPintura;
 	int salidaArmado;
 	int salidaPulido;
+	int salidaEsperada;
 	
 	
 	public Auto (String OT, int tiempoAutorizacion, String requiereMecanico, String tipoSiniestro, 	int tiempoDeReparacionSegunModeloActual){
@@ -39,28 +40,31 @@ public class Auto {
 		this.tiempoDeReparacionSegunModeloActual= tiempoDeReparacionSegunModeloActual;
 		
 		//asignarTiempos de trabajo, segun promedio del excel
+		
+		
 		if(tipoSiniestro.equals("G"))
 		{
-			tiempoDesabolladura=(int)(1.15*8);
-			tiempoPintura=(int)(0.37*8); //volver a fijar
-			tiempoArmado=(int)(0.51*8);; //volver a fijar
-			tiempoPulido=(int)(0.21*8);; //volver a fijar
+			tiempoDesabolladura=(int)(1.6*8+holgura);
+			tiempoPintura=(int)(0.51*8+holgura); //volver a fijar
+			tiempoArmado=(int)(0.67*8+holgura); //volver a fijar
+			tiempoPulido=(int)(0.34*8+holgura); //volver a fijar
 		}
 		if(tipoSiniestro.equals("M"))
 		{	
-			tiempoDesabolladura=(int)(0.55*8);
-			tiempoPintura=(int)(0.26*8);; //volver a fijar
-			tiempoArmado=(int)(0.33*8); //volver a fijar
-			tiempoPulido=(int)(0.18*8); //volver a fijar
+			tiempoDesabolladura=(int)(0.76*8+holgura);
+			tiempoPintura=(int)(0.37*8+holgura); //volver a fijar
+			tiempoArmado=(int)(0.44*8+holgura); //volver a fijar
+			tiempoPulido=(int)(0.29*8+holgura); //volver a fijar
 		}
 		
 		if(tipoSiniestro.equals("L"))
 		{
-			tiempoDesabolladura=(int)(0.37*8);
-			tiempoPintura=(int)(0.17*8); //volver a fijar
-			tiempoArmado=(int)(0.2*8); //volver a fijar
-			tiempoPulido=(int)(0.16*8); //volver a fijar
+			tiempoDesabolladura=(int)(0.51*8+holgura);
+			tiempoPintura=(int)(0.23*8+holgura); //volver a fijar
+			tiempoArmado=(int)(0.27*8+holgura); //volver a fijar
+			tiempoPulido=(int)(0.26*8+holgura); //volver a fijar
 		}
+		
 		
 		
 		

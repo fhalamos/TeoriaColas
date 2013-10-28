@@ -12,6 +12,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+//com.sun.org.apache.xpath.internal.operations.
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,13 +23,19 @@ public class Simulacion {
 	int cantidadDesabolladores;
 	int cantidadMecanicos;
 	int iteracion;
-	List<Integer> demoras;
+	int [] demoras;
+	int[] salidasEsperadas;
 
+	
 	List<Trabajador> pintores;
 	List<Trabajador> desabolladores;
 	List<Trabajador> mecanicos;
 
+	// lineas dnd se imprime el historial
 	List<String> lineas;
+	
+	//lineas dnd guardamos los tiempos de salidas que le infomamos al cliente
+	List<String> tiemposSalidasInformadosCliente;
 
 	// autos que aun no "han llegado" segun la simulacion
 	List<Auto> autosPendientes;
@@ -67,9 +74,11 @@ public class Simulacion {
 		instanciarPersonal();
 		cargarAutosDeExcel();
 
-		// lineas dnd se imprime el output
+		// lineas dnd se imprime el historial
 		lineas = new ArrayList<String>();
-		demoras = new ArrayList<Integer>();
+		//lineas dnd se imprimen los avisos a clientes de cuando estarn listos sus autos
+		tiemposSalidasInformadosCliente=new ArrayList<String>();
+		
 
 	}
 
@@ -86,16 +95,29 @@ public class Simulacion {
 				while (i == llegada) {
 
 					// colaDesabolladura.add(autosPendientes.get(0));
+					boolean a = hayDesabolladorDisponible(i);
 					if(!hayDesabolladorDisponible(i))
 					{
+					demoras= new int [colaDesabolladura.size()+1];
+					salidasEsperadas= new int [colaDesabolladura.size()+1];
 					reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
 					iteracion = 0;
-					if(demoras.size()==0)
-						System.out.println();
+					
 					asignarAcola(autosPendientes.get(0));
+					
 					}
 					
-					else colaDesabolladura.add(autosPendientes.get(0));
+					else 
+					{
+						demoras= new int [colaDesabolladura.size()+1];
+						salidasEsperadas= new int [colaDesabolladura.size()+1];
+						reordenarColaDesabolladura(autosPendientes.get(0), 0, i);
+						iteracion=0;
+						autosPendientes.get(0).salidaEsperada=salidasEsperadas[0];
+						colaDesabolladura.add(autosPendientes.get(0));
+						
+					
+					}
 					
 					
 
@@ -264,7 +286,44 @@ public class Simulacion {
 		}
 		imprimirCalcularDemorasTotales();
 		imprimirHistorialSimulacion();
+		imprimirSalidasEsperadas();
+		
 
+	}
+
+	private void imprimirSalidasEsperadas() {
+		
+
+		// TODO Auto-generated method stub
+		/* Clase que permite escribir en un archivo de texto */
+
+		try {
+			// Crear un objeto File se encarga de crear o abrir acceso a un
+			// archivo que se especifica en su constructor
+			File archivo = new File("salidasEsperadas.txt");
+			if (archivo.exists()) {
+				archivo.delete();
+				archivo = new File("salidasEsperadas.txt");
+			}
+
+			// Crear objeto FileWriter que sera el que nos ayude a escribir
+			// sobre archivo
+			FileWriter escribir = new FileWriter(archivo, true);
+
+			for(int i=0; i<tiemposSalidasInformadosCliente.size();i++)
+				escribir.write(tiemposSalidasInformadosCliente.get(i)+"\n");
+			
+
+			// Cerramos la conexion
+			escribir.close();
+		}
+
+		// Si existe un problema al escribir cae aqui
+		catch (Exception e) {
+			System.out.println("Error al escribir");
+		}
+
+		
 	}
 
 	private void imprimirCalcularDemorasTotales() {
@@ -281,6 +340,25 @@ public class Simulacion {
 				/ colaAutosListos.size();
 		int demoraPromedioNoOptimizadas = sumaDemorasNoOptimizadas
 				/ colaAutosListos.size();
+		
+		//calculamos la cantidad de casos en que se cumplio la prediccion
+		List<Integer> casosPositivos= new ArrayList<Integer>();
+		
+		
+		
+		for(int j=0; j<10; j++)	
+		{
+			casosPositivos.add(0);
+			for (int i = 0; i < colaAutosListos.size(); i++)
+			{
+				int holgura = j * 10;
+				int a = colaAutosListos.get(i).salidaPulido;
+				int b = colaAutosListos.get(i).salidaEsperada;
+				if (colaAutosListos.get(i).salidaPulido < colaAutosListos
+						.get(i).salidaEsperada + 2 + holgura)
+					casosPositivos.set(j, casosPositivos.get(j) + 1);
+			}
+		}
 
 		// TODO Auto-generated method stub
 		/* Clase que permite escribir en un archivo de texto */
@@ -299,11 +377,16 @@ public class Simulacion {
 			FileWriter escribir = new FileWriter(archivo, true);
 
 			escribir.write("Demora promedio luego de optimizacion:");
-			escribir.write(demoraPromedioOptimizadas + "horas" + "\n");
+			escribir.write(demoraPromedioOptimizadas + "horas." + "\n");
 
 			escribir.write("Demora promedio sin optimizacion:");
-			escribir.write(demoraPromedioNoOptimizadas + "horas" + "\n");
+			escribir.write(demoraPromedioNoOptimizadas + "horas." + "\n");
 
+			for(int j=0; j<10; j++)
+			{
+				escribir.write("Porcentaje de autos que cumplieron el plazo anunciado al cliente con holgura "+j*10+" horas:");
+				escribir.write(casosPositivos.get(j)*100/colaAutosListos.size() +"."+ "\n");
+			}
 			// Cerramos la conexion
 			escribir.close();
 		}
@@ -369,22 +452,14 @@ public class Simulacion {
 
 	// poner en determinada posicion un veh
 	private void ordenarCola(List<Auto> cola, int posicion, Auto aOrdenar) {
-		List<Auto> nuevo = new ArrayList<Auto>();
-		for (int i = posicion; i < cola.size(); i++) {
-			nuevo.add(cola.get(i));
-			cola.remove(i);
-		}
-		cola.add(aOrdenar);
-		for (int i = 0; i < nuevo.size(); i++) {
-			cola.add(nuevo.get(i));
-		}
-		// ver si retorna el arreglo
+		
+		cola.add(posicion, aOrdenar);
 
 	}
 
 	// se corre la simulacion de nuevo
 	// calculo a traves de simulacion de los tiempos de salida
-	private void calcularDemoras(int hora, List<Auto> copiaColaDesabolladura,
+	private void calcularDemoras(String id, int hora, List<Auto> copiaColaDesabolladura,
 			List<Auto> copiaColaPintura, List<Auto> copiaColaArmado,
 			List<Auto> copiaColaPulido) {
 
@@ -440,7 +515,6 @@ public class Simulacion {
 						// le quitamos al trabajador ese trabajo
 						t.setTrabajoActual(null);
 					}
-
 			}
 
 			// pintores...
@@ -448,7 +522,6 @@ public class Simulacion {
 				// si esta desocupado, le tratamos de asignar trabajo
 				if (t.ocupado(hora) == false) {
 					if (copiaColaPintura.size() != 0) {
-
 						t.asignarTrabajo(copiaColaPintura.get(0), hora,
 								etapa.pintura);
 						t.trabajoActual.llegadaPintura = hora;
@@ -461,10 +534,11 @@ public class Simulacion {
 				if (hora + 1 < 365 * 2 * 8)
 					if (t.ocupado(hora) == true && t.ocupado(hora + 1) == false) {
 						// agregamos el trabajo a la siguiente cola del proceso
-						copiaColaArmado.add(t.getTrabajoActual());
 						t.trabajoActual.salidaPintura = hora;
 						t.trabajoActual.setEtapa(null);
 
+						copiaColaArmado.add(t.getTrabajoActual());
+						
 						// le quitamos al trabajador ese trabajo
 						t.setTrabajoActual(null);
 					}
@@ -501,27 +575,25 @@ public class Simulacion {
 						// agregamos el trabajo a la siguiente cola del proceso
 						// si era la etapa armado
 						if (t.getTrabajoActual().getEtapa() == etapa.armado) {
-							copiaColaPulido.add(t.getTrabajoActual());
 							t.trabajoActual.salidaArmado = hora;
 							t.trabajoActual.setEtapa(null);
+							copiaColaPulido.add(t.getTrabajoActual());
+							
 						}
 
 						// si era la etapa final...
 						if (t.getTrabajoActual().getEtapa() == etapa.pulido) {
-							t.getTrabajoActual().salidaPulido = hora;
-							int dem = 0;
-
-							// si tira error es pq se esta en el primer veh que
-							// sale
-							
-							if(iteracion<demoras.size())
+							if(id.equals(t.getTrabajoActual().OT))
 							{
-								dem= demoras.get(iteracion);
+								salidasEsperadas[iteracion]=hora;
 							}
-							else demoras.add(dem);
-
-							demoras.set(iteracion, dem
-									+ (t.getTrabajoActual().salidaPulido-t.getTrabajoActual().llegadaDesabolladura));
+							
+								
+							
+							
+							t.getTrabajoActual().salidaPulido = hora;
+							demoras[iteracion]+= 
+							t.getTrabajoActual().salidaPulido-t.getTrabajoActual().tiempoAutorizacion;
 						}
 
 						// le quitamos al trabajador ese trabajo
@@ -630,7 +702,7 @@ public class Simulacion {
 
 		ordenarCola(copiaColaDesabolladura, posicion, a);
 
-		calcularDemoras(hora, copiaColaDesabolladura, copiaColaPintura,
+		calcularDemoras(a.OT, hora, copiaColaDesabolladura, copiaColaPintura,
 				copiaColaArmado, copiaColaPulido);
 		iteracion++; // pendiente averiguar para que cosa
 		posicion++;
@@ -641,21 +713,23 @@ public class Simulacion {
 	// asignar a la cola una vez sabida la posicion a tomar, ver mas CRITERIOS
 	// de aceptacion
 	private void asignarAcola(Auto a) {
-		if(demoras.size()==0)
-			System.out.println();
-		int comparar = (int) demoras.get(0);
+		
+		int comparar =  demoras[0];
 		int pos = 0;
-		for (int i = 0; i < demoras.size(); i++) { //i tenia valor 1
-			if (comparar > (int) demoras.get(i)) {
+		for (int i = 0; i < demoras.length; i++) { //i tenia valor 1
+			if (comparar >  demoras[i] ){
 				pos = i;
-				comparar = (int) demoras.get(i);
+				comparar =  demoras[i];
 			}
-
 		}
-
-		demoras = new ArrayList<Integer>();
-
+		a.salidaEsperada=salidasEsperadas[pos];
 		ordenarCola(colaDesabolladura, pos, a);
+		
+		if(a.salidaEsperada!=0)
+			tiemposSalidasInformadosCliente.add("El cliente "+a.getOT()+" ingreso a las "+a.tiempoAutorizacion+", sale a las "+a.salidaEsperada+" horas.");
+		else
+			tiemposSalidasInformadosCliente.add("El cliente "+a.getOT()+" no alcanzará a salir en los 2 años de simulacion");
+		
 	}
 
 	private void imprimirAutos() {
@@ -671,7 +745,7 @@ public class Simulacion {
 	private void cargarAutosDeExcel() {
 
 		ExcelSheetReader ExcelReader = new ExcelSheetReader();
-		autosPendientes = ExcelReader.readExcelFile("INPUT.xls");
+		autosPendientes = ExcelReader.readExcelFile("input.xls");
 
 	}
 

@@ -85,9 +85,9 @@ public class VentanaPrincipal extends JFrame {
 				
 				
 				//cPintores, cDesabolladores, icMecanicos
-				//simulacion = new Simulacion(2,5,4);
+				simulacion = new Simulacion(2,5,4);
 				
-				simulacion = new Simulacion(5,5,5);
+				//simulacion = new Simulacion(5,5,5);
 				
 				simulacion.correr();
 				
