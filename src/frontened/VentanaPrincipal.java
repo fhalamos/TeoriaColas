@@ -1,6 +1,7 @@
 package frontened;
 
 import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 import java.awt.Window;
 
@@ -20,6 +21,12 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import java.awt.TextField;
+import javax.swing.JFormattedTextField;
+import javax.swing.JEditorPane;
+import javax.swing.Box;
+import javax.swing.JToggleButton;
+import javax.swing.JTextArea;
+import java.awt.Color;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -28,7 +35,10 @@ public class VentanaPrincipal extends JFrame {
 	/**
 	 * 
 	 * Launch the application.
+	 * 
 	 */
+	JTextArea textArea = new JTextArea();
+	
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -61,7 +71,7 @@ public class VentanaPrincipal extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(VentanaPrincipal.class.getResource("/frontened/Citroen Logo 3.jpg")));
 		setTitle("Agendador Citroen ");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 290, 63);
+		setBounds(100, 100, 316, 121);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -74,8 +84,11 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				simulacion = new Simulacion(5,5,5);
+				
+				
 				simulacion.correr();
-			
+				
+				textArea.setText("Resultados listos en su carpeta");
 				
 			}
 		});
@@ -83,6 +96,16 @@ public class VentanaPrincipal extends JFrame {
 		
 		JMenu mnAyuda = new JMenu("Ayuda");
 		menuBar.add(mnAyuda);
+		
+		JPanel panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.CENTER);
+		
+		
+		
+		panel.add(textArea);
+		textArea.setText("Cargue su Base de Datos");
+		textArea.setEditable(false);
+		textArea.setBackground((Color) null);
 	}
 
 }

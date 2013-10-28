@@ -10,6 +10,7 @@ public class Auto {
 	int tiempoAutorizacion;
 	String requiereMecanico;
 	String tipoSiniestro;
+	int tiempoDeReparacionSegunModeloActual;
 	
 	etapa etapa_;
 	
@@ -30,11 +31,12 @@ public class Auto {
 	int salidaPulido;
 	
 	
-	public Auto (String OT, int tiempoAutorizacion, String requiereMecanico, String tipoSiniestro){
+	public Auto (String OT, int tiempoAutorizacion, String requiereMecanico, String tipoSiniestro, 	int tiempoDeReparacionSegunModeloActual){
 		this.OT=OT;
 		this.tiempoAutorizacion=tiempoAutorizacion;
 		this.requiereMecanico=requiereMecanico;
 		this.tipoSiniestro=tipoSiniestro;
+		this.tiempoDeReparacionSegunModeloActual= tiempoDeReparacionSegunModeloActual;
 		
 		//asignarTiempos de trabajo, segun promedio del excel
 		if(tipoSiniestro.equals("G"))

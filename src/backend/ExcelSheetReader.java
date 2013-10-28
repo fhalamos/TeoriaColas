@@ -12,6 +12,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import sun.org.mozilla.javascript.internal.regexp.SubString;
+
 /**
  * @author giftsam
  */
@@ -85,6 +87,7 @@ public class ExcelSheetReader {
 			String fechaAutorizacion="";
 			String requiereMecanica="";
 			String tipoSiniestro="";
+			int tiempoDeSalidaSegunModeloActual=0;
 			
 			//recorremos las columnas
 			for (int j = 0; j < cellTempList.size(); j++) {
@@ -100,10 +103,14 @@ public class ExcelSheetReader {
 				if(j==9)
 					requiereMecanica = stringCellValue;
 				if(j==10)
-				{	
 					tipoSiniestro = stringCellValue;
+				if(j==52)
+				{	
+					String a = stringCellValue.substring(0,stringCellValue.length()-2);
+					tiempoDeSalidaSegunModeloActual= Integer.parseInt(a)*8;
 					break;
 				}
+				
 			}
 			
 			
@@ -141,7 +148,7 @@ public class ExcelSheetReader {
 			
 			
 			//instanciamos el auto
-			Auto auto = new Auto(OT, fecha*8, requiereMecanica+"", tipoSiniestro);
+			Auto auto = new Auto(OT, fecha*8, requiereMecanica+"", tipoSiniestro, tiempoDeSalidaSegunModeloActual);
 			autos.add(auto);
 			
 			//System.out.println();
