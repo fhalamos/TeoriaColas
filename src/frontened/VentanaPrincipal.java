@@ -84,6 +84,8 @@ public class VentanaPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				simulacion = new Simulacion(5,5,5);
+				
+				
 				simulacion.correr();
 				
 				textArea.setText("Resultados listos en su carpeta");
