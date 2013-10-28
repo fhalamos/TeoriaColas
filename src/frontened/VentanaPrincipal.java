@@ -83,8 +83,11 @@ public class VentanaPrincipal extends JFrame {
 		mntmCargarBd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				simulacion = new Simulacion(5,5,5);
 				
+				//cPintores, cDesabolladores, icMecanicos
+				//simulacion = new Simulacion(2,5,4);
+				
+				simulacion = new Simulacion(5,5,5);
 				
 				simulacion.correr();
 				

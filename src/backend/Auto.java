@@ -41,25 +41,25 @@ public class Auto {
 		//asignarTiempos de trabajo, segun promedio del excel
 		if(tipoSiniestro.equals("G"))
 		{
-			tiempoDesabolladura=7*8;
-			tiempoPintura=6*8; //volver a fijar
-			tiempoArmado=6*8; //volver a fijar
-			tiempoPulido=6*8; //volver a fijar
+			tiempoDesabolladura=(int)(1.15*8);
+			tiempoPintura=(int)(0.37*8); //volver a fijar
+			tiempoArmado=(int)(0.51*8);; //volver a fijar
+			tiempoPulido=(int)(0.21*8);; //volver a fijar
 		}
 		if(tipoSiniestro.equals("M"))
 		{	
-			tiempoDesabolladura=3*8;
-			tiempoPintura=6*8; //volver a fijar
-			tiempoArmado=6*8; //volver a fijar
-			tiempoPulido=6*8; //volver a fijar
+			tiempoDesabolladura=(int)(0.55*8);
+			tiempoPintura=(int)(0.26*8);; //volver a fijar
+			tiempoArmado=(int)(0.33*8); //volver a fijar
+			tiempoPulido=(int)(0.18*8); //volver a fijar
 		}
 		
 		if(tipoSiniestro.equals("L"))
 		{
-			tiempoDesabolladura=2*8;
-			tiempoPintura=6*8; //volver a fijar
-			tiempoArmado=6*8; //volver a fijar
-			tiempoPulido=6*8; //volver a fijar
+			tiempoDesabolladura=(int)(0.37*8);
+			tiempoPintura=(int)(0.17*8); //volver a fijar
+			tiempoArmado=(int)(0.2*8); //volver a fijar
+			tiempoPulido=(int)(0.16*8); //volver a fijar
 		}
 		
 		
